@@ -1,0 +1,33 @@
+{% extends "layout_new.html" %}
+{% block title %}Новый заказ - Eko CRM{% endblock %}
+{% block content %}
+<div style="padding: var(--spacing-xl) 0; max-width: 800px;">
+    <h1 style="margin-bottom: var(--spacing-lg);">Создать заказ</h1>
+    <div class="card">
+        <div class="card__body">
+            <form style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                <div class="form-group">
+                    <label class="form-group__label required">Клиент</label>
+                    <select class="form-input" required>
+                        <option value="">Выберите клиента</option>
+                        <option>ООО Спорт</option>
+                        <option>РЦ Хоккей</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-group__label required">Название заказа</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-group__label">Описание</label>
+                    <textarea class="form-textarea"></textarea>
+                </div>
+                <div style="display: flex; gap: var(--spacing-md);">
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                    <button type="reset" class="btn btn-secondary">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
