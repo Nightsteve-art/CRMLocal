@@ -1,0 +1,184 @@
+{% extends "layout_new.html" %}
+
+{% block title %}Kanban Board - Eko CRM{% endblock %}
+
+{% block content %}
+<div style="padding: var(--spacing-xl) 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+        <h1>Kanban Board</h1>
+        <div style="display: flex; gap: var(--spacing-md);">
+            <select class="form-input" style="max-width: 150px;">
+                <option>Все цехи</option>
+                <option>Сварка</option>
+                <option>Сборка</option>
+                <option>Швейка</option>
+                <option>ОТК</option>
+            </select>
+            <button class="btn btn-secondary">🔍 Фильтры</button>
+            <button class="btn btn-primary">➕ Новая задача</button>
+        </div>
+    </div>
+
+    <!-- Kanban Columns -->
+    <div class="kanban">
+        <!-- Column 1: To Do -->
+        <div class="kanban__column">
+            <div class="kanban__header">
+                <div class="kanban__title">📋 К началу</div>
+                <div class="kanban__count">4</div>
+            </div>
+            <div class="kanban__cards">
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#456 • Комплект для спорта</div>
+                    <div class="kanban__card-meta">
+                        <span>ООО Спорт</span>
+                        <span>2 дня</span>
+                    </div>
+                    <div style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
+                        <span class="badge badge-primary" style="font-size: 10px;">Сварка</span>
+                    </div>
+                </div>
+
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#789 • Разделители арены</div>
+                    <div class="kanban__card-meta">
+                        <span>РЦ Хоккей</span>
+                        <span>5 дней</span>
+                    </div>
+                    <div style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
+                        <span class="badge badge-primary" style="font-size: 10px;">Сборка</span>
+                    </div>
+                </div>
+
+                <div class="kanban__card" style="border-left: 3px solid var(--error);">
+                    <div class="kanban__card-title">#001 • Защитные маты 🔴</div>
+                    <div class="kanban__card-meta">
+                        <span>ЗАО Арена</span>
+                        <span>срочно</span>
+                    </div>
+                    <div style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
+                        <span class="badge badge-warning" style="font-size: 10px;">Швейка</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: In Progress -->
+        <div class="kanban__column">
+            <div class="kanban__header">
+                <div class="kanban__title">🔴 В работе</div>
+                <div class="kanban__count">6</div>
+            </div>
+            <div class="kanban__cards">
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#123 • Борта хоккея</div>
+                    <div style="margin: var(--spacing-sm) 0;">
+                        <div class="progress">
+                            <div class="progress__bar" style="width: 60%;"></div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--neutral-600); text-align: right;">60%</div>
+                    </div>
+                    <div class="kanban__card-meta">
+                        <span>ООО Спорт</span>
+                        <span>Иван С.</span>
+                    </div>
+                </div>
+
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#234 • Конструкция монтажа</div>
+                    <div style="margin: var(--spacing-sm) 0;">
+                        <div class="progress">
+                            <div class="progress__bar" style="width: 75%;"></div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--neutral-600); text-align: right;">75%</div>
+                    </div>
+                    <div class="kanban__card-meta">
+                        <span>ЗАО Арена</span>
+                        <span>Петр А.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 3: Under Review -->
+        <div class="kanban__column">
+            <div class="kanban__header">
+                <div class="kanban__title">✓ На проверке</div>
+                <div class="kanban__count">2</div>
+            </div>
+            <div class="kanban__cards">
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#567 • Размеры верифицированы</div>
+                    <div class="kanban__card-meta">
+                        <span>РЦ Спорт</span>
+                        <span>ОТК</span>
+                    </div>
+                </div>
+
+                <div class="kanban__card">
+                    <div class="kanban__card-title">#890 • Покраска завершена</div>
+                    <div class="kanban__card-meta">
+                        <span>МЦ Лёд</span>
+                        <span>ОТК</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 4: Done -->
+        <div class="kanban__column">
+            <div class="kanban__header">
+                <div class="kanban__title">✅ Завершено</div>
+                <div class="kanban__count">3</div>
+            </div>
+            <div class="kanban__cards">
+                <div class="kanban__card" style="opacity: 0.7;">
+                    <div class="kanban__card-title">#321 • Боковые панели</div>
+                    <div class="kanban__card-meta">
+                        <span>ООО Спорт</span>
+                        <span>готово</span>
+                    </div>
+                </div>
+
+                <div class="kanban__card" style="opacity: 0.7;">
+                    <div class="kanban__card-title">#111 • Основание смонтировано</div>
+                    <div class="kanban__card-meta">
+                        <span>РЦ Хоккей</span>
+                        <span>отгружено</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="margin-top: var(--spacing-xl); padding: var(--spacing-lg); background: var(--neutral-50); border-radius: var(--radius-lg); display: flex; gap: var(--spacing-xl); flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            <div style="width: 3px; height: 16px; background: var(--primary);"></div>
+            <span style="font-size: 12px;">Обычная задача</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            <div style="width: 3px; height: 16px; background: var(--warning);"></div>
+            <span style="font-size: 12px;">Срочная задача</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            <div style="width: 3px; height: 16px; background: var(--error);"></div>
+            <span style="font-size: 12px;">Критичная (блокировка)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            <span style="font-size: 12px; color: var(--neutral-600);">Потащите карточку для перемещения</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .kanban__card {
+        cursor: grab;
+        user-select: none;
+    }
+    .kanban__card:active {
+        cursor: grabbing;
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}

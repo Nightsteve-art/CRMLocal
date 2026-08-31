@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Eko-Production CRM{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+    <style>
+        .navbar__icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--neutral-600);
+            transition: color 0.2s;
+            padding: var(--spacing-md);
+        }
+        .navbar__icon-btn:hover {
+            color: var(--primary);
+        }
+        #sidebar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #sidebar-toggle {
+                display: block;
+            }
+            .layout__sidebar {
+                position: fixed;
+                left: -260px;
+                top: 60px;
+                height: calc(100vh - 60px);
+                width: 260px;
+                z-index: 50;
+                transition: left 0.3s ease;
+            }
+            .layout__sidebar.active {
+                left: 0;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="layout">
+        <!-- Header -->
+        <header class="layout__header navbar">
+            <a href="/" class="navbar__logo">
+                <span style="font-size: 20px;">🏒</span>
+                <span>Eko CRM</span>
+            </a>
+            
+            <div class="navbar__search">
+                <input type="text" class="search-input" placeholder="Поиск заказов, КП, материалов...">
+            </div>
+            
+            <div class="navbar__actions">
+                <button class="navbar__icon-btn" title="Уведомления">
+                    🔔
+                </button>
+                <div class="dropdown">
+                    <button class="navbar__icon-btn dropdown__trigger">👤</button>
+                    <div class="dropdown__menu">
+                        <a href="/users/profile" class="dropdown__item">Мой профиль</a>
+                        <a href="/settings" class="dropdown__item">Настройки</a>
+                        <hr style="margin: 4px 0; border: none; border-top: 1px solid var(--neutral-200);">
+                        <a href="/logout" class="dropdown__item danger">Выход</a>
+                    </div>
+                </div>
+                <button id="sidebar-toggle" class="navbar__icon-btn">☰</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="layout__sidebar">
+            <nav class="sidebar">
+                <!-- Main Navigation -->
+                <div class="sidebar__section">
+                    <h3 class="sidebar__title">Главное</h3>
+                    <div class="sidebar__nav">
+                        <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+                            <span class="nav-item__icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="/orders" class="nav-item {% if '/orders' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">📦</span>
+                            <span>Заказы</span>
+                        </a>
+                        <a href="/proposals" class="nav-item {% if '/proposals' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">📋</span>
+                            <span>КП</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Production -->
+                <div class="sidebar__section">
+                    <h3 class="sidebar__title">Производство</h3>
+                    <div class="sidebar__nav">
+                        <a href="/kanban" class="nav-item {% if '/kanban' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">🏭</span>
+                            <span>Kanban</span>
+                        </a>
+                        <a href="/sewing" class="nav-item {% if '/sewing' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">🧵</span>
+                            <span>Швейка</span>
+                        </a>
+                        <a href="/warehouse" class="nav-item {% if '/warehouse' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">📚</span>
+                            <span>Склад</span>
+                        </a>
+                        <a href="/materials" class="nav-item {% if '/materials' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">🔧</span>
+                            <span>Материалы</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Admin -->
+                <div class="sidebar__section">
+                    <h3 class="sidebar__title">Администрация</h3>
+                    <div class="sidebar__nav">
+                        <a href="/counterparties" class="nav-item {% if '/counterparties' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">💼</span>
+                            <span>Контрагенты</span>
+                        </a>
+                        <a href="/users" class="nav-item {% if '/users' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">👥</span>
+                            <span>Пользователи</span>
+                        </a>
+                        <a href="/settings" class="nav-item {% if '/settings' in request.path %}active{% endif %}">
+                            <span class="nav-item__icon">⚙️</span>
+                            <span>Настройки</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="layout__main">
+            <div class="container">
+                {% if session.get('message') %}
+                <div class="alert alert-primary slide-in" style="margin-top: var(--spacing-lg);">
+                    <div class="alert__icon">ℹ️</div>
+                    <div>{{ session.get('message') }}</div>
+                    <button class="alert__close">✕</button>
+                </div>
+                {% endif %}
+
+                {% if session.get('error') %}
+                <div class="alert alert-error slide-in" style="margin-top: var(--spacing-lg);">
+                    <div class="alert__icon">✕</div>
+                    <div>{{ session.get('error') }}</div>
+                    <button class="alert__close">✕</button>
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/modern.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,255 @@
+{% extends "layout_new.html" %}
+
+{% block title %}Паспорт заказа {{ order.number }} - Eko CRM{% endblock %}
+
+{% block content %}
+<div style="padding: var(--spacing-xl) 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+        <div>
+            <h1 style="margin-bottom: var(--spacing-sm);">Паспорт заказа #{{ order.number }}</h1>
+            <div style="color: var(--neutral-600); font-size: 13px;">
+                {{ order.title }} • {{ order.counterparty.name }}
+            </div>
+        </div>
+        <div style="display: flex; gap: var(--spacing-md);">
+            <button class="btn btn-secondary">📥 Экспорт</button>
+            <button class="btn btn-primary">✎ Редактировать</button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="card">
+        <div style="border-bottom: 2px solid var(--neutral-200); display: flex; overflow-x: auto;">
+            <button class="tab active" onclick="switchTab('overview')">📋 Обзор</button>
+            <button class="tab" onclick="switchTab('spec')">🔧 Спецификация</button>
+            <button class="tab" onclick="switchTab('production')">🏭 Производство</button>
+            <button class="tab" onclick="switchTab('materials')">📦 Материалы</button>
+            <button class="tab" onclick="switchTab('installation')">🏗️ Монтаж</button>
+            <button class="tab" onclick="switchTab('comments')">💬 Комментарии</button>
+            <button class="tab" onclick="switchTab('history')">📜 История</button>
+        </div>
+
+        <!-- TAB: Overview -->
+        <div id="overview" class="tab-content active">
+            <div class="card__body">
+                <div class="grid grid-2">
+                    <div>
+                        <h4 style="margin-bottom: var(--spacing-md);">Информация о заказе</h4>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                            <div>
+                                <div style="font-size: 12px; color: var(--neutral-600); text-transform: uppercase; margin-bottom: var(--spacing-sm);">Статус</div>
+                                <div>
+                                    <span class="badge badge-primary">На рассмотрении</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--neutral-600); text-transform: uppercase; margin-bottom: var(--spacing-sm);">Готовность</div>
+                                <div style="display: flex; gap: var(--spacing-md); align-items: center;">
+                                    <div class="progress" style="flex: 1;">
+                                        <div class="progress__bar" style="width: 30%;"></div>
+                                    </div>
+                                    <div style="font-weight: 600; min-width: 40px;">30%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--neutral-600); text-transform: uppercase; margin-bottom: var(--spacing-sm);">Клиент</div>
+                                <a href="/counterparties/{{ order.counterparty.id }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                                    {{ order.counterparty.name }}
+                                </a>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: var(--neutral-600); text-transform: uppercase; margin-bottom: var(--spacing-sm);">Дата создания</div>
+                                <div>{{ order.created_at.strftime('%d.%m.%Y') }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: var(--spacing-md);">Сроки</h4>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                            <div style="padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                                <div style="font-size: 12px; color: var(--neutral-600); margin-bottom: var(--spacing-sm);">Проектирование</div>
+                                <div style="font-weight: 600;">5 дней (завершено)</div>
+                            </div>
+                            <div style="padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                                <div style="font-size: 12px; color: var(--neutral-600); margin-bottom: var(--spacing-sm);">Производство</div>
+                                <div style="font-weight: 600;">14 дней (в работе)</div>
+                            </div>
+                            <div style="padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                                <div style="font-size: 12px; color: var(--neutral-600); margin-bottom: var(--spacing-sm);">Монтаж</div>
+                                <div style="font-weight: 600;">3 дня (запланировано)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Critical Issues -->
+                <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--neutral-200);">
+                    <h4 style="margin-bottom: var(--spacing-md);">⚠️ Критичные риски</h4>
+                    <div class="alert alert-error" style="margin-bottom: var(--spacing-md);">
+                        <div class="alert__icon">🔴</div>
+                        <div>
+                            <strong>Дефицит материала:</strong> Ткань зелёная недоступна<br>
+                            <small>Нужно закупить 100м, сроки монтажа под угрозой</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Production -->
+        <div id="production" class="tab-content">
+            <div class="card__body">
+                <h4 style="margin-bottom: var(--spacing-lg);">Этапы производства</h4>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                    <div style="display: flex; gap: var(--spacing-lg);">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md);">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--success); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">✓</div>
+                            <div style="height: 40px; width: 2px; background: var(--success);"></div>
+                        </div>
+                        <div style="flex: 1; padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                            <div style="font-weight: 600;">Проектирование</div>
+                            <div style="font-size: 12px; color: var(--neutral-600); margin-top: var(--spacing-sm);">Завершено 20.08.2026</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-lg);">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md);">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+                            <div style="height: 40px; width: 2px; background: var(--neutral-300);"></div>
+                        </div>
+                        <div style="flex: 1; padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                            <div style="font-weight: 600;">Сварка</div>
+                            <div style="font-size: 12px; color: var(--neutral-600); margin-top: var(--spacing-sm);">В процессе (50% готово)</div>
+                            <div style="margin-top: var(--spacing-sm);">
+                                <div class="progress">
+                                    <div class="progress__bar" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-lg);">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md);">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--warning); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+                        </div>
+                        <div style="flex: 1; padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                            <div style="font-weight: 600;">Швейка</div>
+                            <div style="font-size: 12px; color: var(--error); margin-top: var(--spacing-sm);">⚠️ Заблокирована: нет материала</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Materials -->
+        <div id="materials" class="tab-content">
+            <div class="card__body">
+                <h4 style="margin-bottom: var(--spacing-lg);">Требуемые материалы</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Материал</th>
+                            <th>Нужно</th>
+                            <th>Выдано</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Металл 40x20</td>
+                            <td>200 м</td>
+                            <td>150 м</td>
+                            <td><span class="badge badge-warning">Ожидание</span></td>
+                        </tr>
+                        <tr>
+                            <td>Пластик черный</td>
+                            <td>50 м2</td>
+                            <td>50 м2</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                        <tr>
+                            <td>Ткань зелёная</td>
+                            <td>100 м</td>
+                            <td>0 м</td>
+                            <td><span class="badge badge-error">Дефицит</span></td>
+                        </tr>
+                        <tr>
+                            <td>Крепеж м6</td>
+                            <td>1000 шт</td>
+                            <td>800 шт</td>
+                            <td><span class="badge badge-warning">Ожидание</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: Comments -->
+        <div id="comments" class="tab-content">
+            <div class="card__body">
+                <h4 style="margin-bottom: var(--spacing-lg);">Комментарии</h4>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                    <div style="padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-sm);">
+                            <div style="font-weight: 600; font-size: 13px;">Иван Сварщик</div>
+                            <div style="font-size: 11px; color: var(--neutral-600);">20.08.2026 14:30</div>
+                        </div>
+                        <div style="font-size: 13px; color: var(--neutral-800);">
+                            Металл нужен срочно, иначе не успеем завтра начать сварку.
+                        </div>
+                    </div>
+
+                    <div style="padding: var(--spacing-md); background: var(--neutral-50); border-radius: var(--radius-md);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-sm);">
+                            <div style="font-weight: 600; font-size: 13px;">Мария Менеджер</div>
+                            <div style="font-size: 11px; color: var(--neutral-600);">20.08.2026 10:00</div>
+                        </div>
+                        <div style="font-size: 13px; color: var(--neutral-800);">
+                            Ждём подтверждения от клиента, КП отправлена вчера.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--neutral-200);">
+                    <textarea class="form-input" placeholder="Добавить комментарий..." style="font-size: 13px;"></textarea>
+                    <button class="btn btn-primary" style="margin-top: var(--spacing-md);">Опубликовать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other tabs placeholders -->
+        <div id="spec" class="tab-content">
+            <div class="card__body">
+                <p>Спецификация будет отображена здесь</p>
+            </div>
+        </div>
+        <div id="installation" class="tab-content">
+            <div class="card__body">
+                <p>Информация о монтаже будет отображена здесь</p>
+            </div>
+        </div>
+        <div id="history" class="tab-content">
+            <div class="card__body">
+                <p>История изменений будет отображена здесь</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}
