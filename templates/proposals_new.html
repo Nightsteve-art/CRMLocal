@@ -1,0 +1,40 @@
+{% extends "layout_new.html" %}
+{% block title %}КП - Eko CRM{% endblock %}
+{% block content %}
+<div style="padding: var(--spacing-xl) 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+        <h1>Коммерческие предложения</h1>
+        <button class="btn btn-primary">➕ Создать КП</button>
+    </div>
+    
+    <div class="card">
+        <div class="card__body">
+            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                <input type="text" class="form-input" placeholder="Поиск КП..." style="flex: 1;">
+                <button class="btn btn-secondary">🔍 Поиск</button>
+            </div>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Клиент</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>КП-2026-001</strong></td>
+                        <td>ООО Спорт</td>
+                        <td>250 000 ₽</td>
+                        <td><span class="badge badge-success">Принята</span></td>
+                        <td>20.08.2026</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
