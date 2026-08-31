@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: eko-crm
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+      - DATABASE_URL=sqlite:///eko_production.db
+      - SECRET_KEY=${SECRET_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    volumes:
+      - ./instance:/app/instance
+      - ./static/uploads:/app/static/uploads
+    command: gunicorn -c gunicorn.conf.py app:app
+    restart: unless-stopped
+    networks:
+      - eko-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: eko-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./static:/app/static:ro
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - eko-network
+
+  db-backup:
+    image: alpine:latest
+    container_name: eko-backup
+    volumes:
+      - ./instance:/app/instance
+      - ./backups:/backups
+    command: sh -c "while true; do cp /app/instance/eko_production.db /backups/eko_production_$(date +%Y%m%d_%H%M%S).db && sleep 86400; done"
+    restart: unless-stopped
+    networks:
+      - eko-network
+
+networks:
+  eko-network:
+    driver: bridge
