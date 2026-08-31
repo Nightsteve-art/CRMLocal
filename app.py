@@ -534,6 +534,18 @@ def home():
     
     return render_template('index.html', stats=stats)
 
+# Isolated preview for the redesigned interface. Existing CRM routes remain unchanged.
+@app.route('/ui-preview')
+@login_required
+def ui_preview():
+    stats = {
+        'proposals': Proposal.query.count(),
+        'stock_items': StockItem.query.count(),
+        'sewing_tasks': SewingTask.query.count(),
+        'orders': Order.query.count(),
+    }
+    return render_template('modern_preview.html', stats=stats)
+
 # Обновить функцию login
 @app.route('/login', methods=['GET', 'POST'])
 def login():

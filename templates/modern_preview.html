@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}Modern UI preview — Eko-Production CRM{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modern-preview.css') }}">
+<div class="crm-shell">
+  <header class="crm-topbar">
+    <a class="crm-brand" href="{{ url_for('home') }}"><i>⚡</i> Eko-Production <small>CRM</small></a>
+    <nav class="crm-nav">
+      <a class="active" href="#overview">Главная</a><a href="#orders">Заказы</a><a href="#production">Производство</a><a href="#warehouse">Склад</a>
+    </nav>
+    <a class="btn btn-primary" href="{{ url_for('home') }}">Вернуться в CRM</a>
+  </header>
+  <main class="crm-main" id="overview">
+    <section class="page-heading">
+      <div><h1>Современный dashboard</h1><p>Безопасный предварительный просмотр нового интерфейса. Рабочие маршруты CRM не изменены.</p></div>
+      <button class="btn btn-primary">+ Новый заказ</button>
+    </section>
+    <section class="grid">
+      <article class="card"><div class="metric-label">Активные заказы</div><div class="metric-value">{{ stats.orders }}</div><div class="metric-note">● В работе</div></article>
+      <article class="card"><div class="metric-label">Коммерческие предложения</div><div class="metric-value">{{ stats.proposals }}</div><div class="metric-note">● Актуальные данные</div></article>
+      <article class="card"><div class="metric-label">Позиций на складе</div><div class="metric-value">{{ stats.stock_items }}</div><div class="metric-note">● Учтено в системе</div></article>
+      <article class="card"><div class="metric-label">Задачи швейки</div><div class="metric-value">{{ stats.sewing_tasks }}</div><div class="metric-note">● В очереди и работе</div></article>
+    </section>
+    <section class="content-grid">
+      <article class="card"><h2>⚠️ Требуют внимания</h2><div class="alert"><div>⚠️</div><div><b>Проверьте дефициты материалов</b><span>Откройте раздел «Склад», чтобы сверить остатки и резервы.</span></div></div><div class="alert"><div>📌</div><div><b>Планирование производства</b><span>Уточните сроки активных задач и назначенных исполнителей.</span></div></div></article>
+      <article class="card"><h2>Мои ближайшие задачи</h2><div class="task"><span>Проверить состояние заказов</span><span class="badge">Сегодня</span></div><div class="task"><span>Подтвердить материалы</span><span class="badge">Завтра</span></div><div class="task"><span>Проверить задачи швейки</span><span class="badge">Неделя</span></div></article>
+    </section>
+  </main>
+</div>
+{% endblock %}
