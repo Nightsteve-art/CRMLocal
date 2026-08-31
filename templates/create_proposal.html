@@ -1,0 +1,277 @@
+{% extends "layout.html" %}
+
+{% block title %}Новое КП - Eko-production{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Breadcrumb 
+    <div class="breadcrumb">
+        <a href="{{ url_for('dashboard') }}" class="breadcrumb-link">
+            <i class="fas fa-home"></i>
+            Главная
+        </a>
+        <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+        <span class="breadcrumb-item">Новое КП</span>
+    </div>-->
+
+    <div class="card hover-card">
+        <div class="card-header">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-plus-circle" style="color: #475569;"></i>
+                Новое коммерческое предложение
+            </h2>
+            <p style="color: #6b7280; margin-top: 0.5rem; font-size: 0.875rem;">
+                Заполните информацию о новом коммерческом предложении
+            </p>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('create_proposal') }}" enctype="multipart/form-data" id="proposalForm">
+                <!-- Основная информация -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                        Основная информация
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="counterparty_id">
+                                Контрагент <span style="color: #dc2626;">*</span>
+                            </label>
+                            <select class="form-control" id="counterparty_id" name="counterparty_id" required>
+                                <option value="">Выберите контрагента</option>
+                                {% for cp in counterparties %}
+                                <option value="{{ cp.id }}">{{ cp.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div style="margin-top: 0.5rem;">
+                                <a href="{{ url_for('create_counterparty') }}" 
+                                   style="font-size: 0.75rem; color: #475569; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fas fa-plus"></i> Добавить нового контрагента
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="title">
+                                Название КП <span style="color: #dc2626;">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="title" name="title" required 
+                                   placeholder="Например: Поставка оборудования">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Детали КП -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                        <i class="fas fa-file-alt" style="margin-right: 0.5rem;"></i>
+                        Детали КП
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="proposal_number">Номер КП</label>
+                            <input type="text" class="form-control" id="proposal_number" name="proposal_number" 
+                                   placeholder="KP-2024-001">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="status">Статус</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="Запрос КП">Запрос КП</option>
+                                <option value="В работе">В работе</option>
+                                <option value="Готов к отгрузке">Готов к отгрузке</option>
+                                <option value="Исполнено">Исполнено</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="description">Описание</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" 
+                                  placeholder="Детальное описание коммерческого предложения..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Финансовая информация -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                        <i class="fas fa-money-bill-wave" style="margin-right: 0.5rem;"></i>
+                        Финансовая информация
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="amount">Сумма</label>
+                            <div style="position: relative;">
+                                <input type="number" class="form-control" id="amount" name="amount" step="0.01" 
+                                       placeholder="0.00" style="padding-left: 2rem;">
+                                <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">₽</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="currency">Валюта</label>
+                            <select class="form-control" id="currency" name="currency">
+                                <option value="RUB">RUB - Российский рубль</option>
+                                <option value="USD">USD - Доллар США</option>
+                                <option value="EUR">EUR - Евро</option>
+                                <option value="CNY">CNY - Китайский юань</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="deadline">Срок исполнения</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Файл КП -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                        <i class="fas fa-paperclip" style="margin-right: 0.5rem;"></i>
+                        Файл КП
+                    </h3>
+                    
+                    <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('file').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+                        <p style="color: #374151; margin-bottom: 0.5rem; font-weight: 500;">
+                            Перетащите файл сюда или кликните для выбора
+                        </p>
+                        <p style="font-size: 0.75rem; color: #6b7280;">
+                            Поддерживаемые форматы: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG
+                            <br>Максимальный размер: 16 MB
+                        </p>
+                        <input type="file" id="file" name="file" 
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                               style="display: none;"
+                               onchange="handleFileSelect(this)">
+                    </div>
+                    <div id="filePreview" style="margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Форма отправки -->
+                <div style="padding-top: 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.75rem; color: #6b7280;">
+                            <span style="color: #dc2626;">*</span> Обязательные поля
+                        </span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            <span>Сохранить КП</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Установить минимальную дату на сегодня
+document.getElementById('deadline').min = new Date().toISOString().split('T')[0];
+
+// Обработка выбора файла
+function handleFileSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const dropZone = document.getElementById('fileDropZone');
+    const preview = document.getElementById('filePreview');
+    
+    // Проверка размера файла (16 MB)
+    if (file.size > 16 * 1024 * 1024) {
+        showNotification('Файл слишком большой. Максимальный размер: 16 MB', 'error');
+        input.value = '';
+        return;
+    }
+    
+    // Обновляем зону загрузки
+    dropZone.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem;">
+            <div style="width: 48px; height: 48px; background: #f3f4f6; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #475569; border: 1px solid #e5e7eb;">
+                <i class="fas fa-file"></i>
+            </div>
+            <div style="flex: 1; text-align: left;">
+                <div style="font-weight: 500; color: #111827;">${file.name}</div>
+                <div style="font-size: 0.75rem; color: #6b7280;">
+                    ${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type || 'Неизвестный тип'}
+                </div>
+            </div>
+            <button type="button" onclick="clearFile()" style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 0.5rem;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+}
+
+function clearFile() {
+    document.getElementById('file').value = '';
+    const dropZone = document.getElementById('fileDropZone');
+    dropZone.innerHTML = `
+        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <p style="color: #374151; margin-bottom: 0.5rem; font-weight: 500;">
+            Перетащите файл сюда или кликните для выбора
+        </p>
+        <p style="font-size: 0.75rem; color: #6b7280;">
+            Поддерживаемые форматы: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG
+            <br>Максимальный размер: 16 MB
+        </p>
+    `;
+}
+
+// Drag and drop для файлов
+const dropZone = document.getElementById('fileDropZone');
+
+dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    
+    const file = e.dataTransfer.files[0];
+    if (file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById('file').files = dataTransfer.files;
+        handleFileSelect(document.getElementById('file'));
+    }
+});
+
+// Валидация формы перед отправкой
+document.getElementById('proposalForm').addEventListener('submit', function(e) {
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.style.borderColor = '#dc2626';
+            showError(field, 'Это поле обязательно');
+            isValid = false;
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        showNotification('Пожалуйста, заполните все обязательные поля', 'error');
+    }
+});
+</script>
+{% endblock %}

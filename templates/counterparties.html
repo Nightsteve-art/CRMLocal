@@ -1,0 +1,379 @@
+{% extends "layout.html" %}
+
+{% block title %}Контрагенты • Eko-Production{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!--
+    <div class="breadcrumb">
+        <a href="{{ url_for('dashboard') }}" class="breadcrumb-link">
+            <i class="fas fa-home"></i>
+            Главная
+        </a>
+        <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+        <span class="breadcrumb-item">Контрагенты</span>
+    </div> Breadcrumb -->
+
+    <!-- Header -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-body" style="padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.25rem;">
+                        Контрагенты
+                    </h1>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                        <i class="fas fa-users" style="margin-right: 0.5rem;"></i>
+                        Всего контрагентов: <strong style="color: var(--primary);">{{ counterparties|length }}</strong>
+                    </p>
+                </div>
+                <div class="quick-actions">
+                    <a href="{{ url_for('create_counterparty') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        <i class="fas fa-plus"></i>
+                        <span>Новый контрагент</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Counterparties Grid -->
+    {% if counterparties %}
+    <div class="counterparties-grid">
+        {% for counterparty in counterparties %}
+        <div class="counterparty-card">
+            <div class="counterparty-header">
+                <div>
+                    <div class="counterparty-name">{{ counterparty.name }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                        <i class="fas fa-calendar"></i> Добавлен: {{ counterparty.created_at|format_date_short }}
+                    </div>
+                </div>
+                <div class="counterparty-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+            </div>
+            
+            {% if counterparty.contact_person or counterparty.email or counterparty.phone %}
+            <div class="counterparty-meta">
+                {% if counterparty.contact_person %}
+                <div class="counterparty-info">
+                    <i class="fas fa-user"></i>
+                    <span>{{ counterparty.contact_person }}</span>
+                </div>
+                {% endif %}
+                
+                {% if counterparty.email %}
+                <div class="counterparty-info">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ counterparty.email }}</span>
+                </div>
+                {% endif %}
+                
+                {% if counterparty.phone %}
+                <div class="counterparty-info">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ counterparty.phone }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if counterparty.address %}
+            <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--gray-100);">
+                <div style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem;">
+                    <i class="fas fa-map-marker-alt"></i> Адрес:
+                </div>
+                <div style="font-size: 0.875rem; color: var(--gray-700);">
+                    {{ counterparty.address|truncate(100) }}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <a href="{{ url_for('create_proposal') }}?counterparty_id={{ counterparty.id }}" 
+                   class="btn btn-sm btn-primary" style="flex: 1; padding: 0.375rem 0.75rem; font-size: 0.75rem;">
+                    <i class="fas fa-plus"></i>
+                    <span>Добавить КП</span>
+                </a>
+                <button onclick="showCounterpartyDetails({{ counterparty.id }})" 
+                        class="btn btn-sm btn-secondary" style="padding: 0.375rem 0.75rem; font-size: 0.75rem;">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty state -->
+    <div class="empty-counterparties">
+        <div class="empty-counterparties-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 class="empty-counterparties-title">Нет контрагентов</h3>
+        <p class="empty-counterparties-description">
+            Добавьте первого контрагента для начала работы с коммерческими предложениями
+        </p>
+        <a href="{{ url_for('create_counterparty') }}" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i>
+            Добавить контрагента
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal Window Template (исправленный) -->
+<div id="counterpartyModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">
+                <i class="fas fa-building"></i>
+                <span id="modalCounterpartyName"></span>
+            </h2>
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="modalBody" style="padding: 1rem 0;">
+            <!-- Контент будет загружен динамически -->
+        </div>
+        
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button id="modalCreateProposalBtn" class="btn btn-primary" style="flex: 1;">
+                <i class="fas fa-plus"></i>
+                <span>Добавить КП</span>
+            </button>
+            <button onclick="closeModal()" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                <span>Закрыть</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Глобальная переменная для текущего контрагента
+let currentCounterpartyId = null;
+
+// Функция для отображения модального окна
+async function showCounterpartyDetails(counterpartyId) {
+    currentCounterpartyId = counterpartyId;
+    
+    try {
+        const response = await fetch(`/api/counterparty/${counterpartyId}`);
+        const counterparty = await response.json();
+        
+        // Обновляем модальное окно
+        document.getElementById('modalCounterpartyName').textContent = counterparty.name;
+        document.getElementById('modalCreateProposalBtn').onclick = function() {
+            window.location.href = `/proposal/create?counterparty_id=${counterpartyId}`;
+        };
+        
+        // Заполняем тело модального окна
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = `
+            <div style="display: grid; gap: 1rem;">
+                ${counterparty.contact_person ? `
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                        Контактное лицо
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-800);">
+                        <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                        ${counterparty.contact_person}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${counterparty.email ? `
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                        Email
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-800);">
+                        <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                        <a href="mailto:${counterparty.email}" style="color: var(--primary); text-decoration: none;">
+                            ${counterparty.email}
+                        </a>
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${counterparty.phone ? `
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                        Телефон
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-800);">
+                        <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                        <a href="tel:${counterparty.phone}" style="color: var(--primary); text-decoration: none;">
+                            ${counterparty.phone}
+                        </a>
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${counterparty.address ? `
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                        Адрес
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-800); line-height: 1.4;">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                        ${counterparty.address}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                        Дата добавления
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--gray-800);">
+                        <i class="fas fa-calendar" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                        ${new Date(counterparty.created_at).toLocaleDateString('ru-RU')}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Показываем модальное окно
+        document.getElementById('counterpartyModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        showNotification('Ошибка загрузки данных контрагента', 'error');
+    }
+}
+
+// Функция для закрытия модального окна
+function closeModal() {
+    document.getElementById('counterpartyModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    currentCounterpartyId = null;
+}
+
+// Закрытие модального окна при клике вне его
+document.getElementById('counterpartyModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Закрытие по клавише ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('counterpartyModal');
+        if (modal.style.display === 'flex') {
+            closeModal();
+        }
+    }
+});
+</script>
+
+<style>
+    .counterparties-grid {
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Стили для модального окна */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 1rem;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--gray-500);
+        cursor: pointer;
+        font-size: 1.25rem;
+        padding: 0.25rem;
+        border-radius: var(--radius-sm);
+        transition: var(--transition-fast);
+    }
+    
+    .modal-close:hover {
+        background: var(--gray-100);
+        color: var(--gray-700);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .counterparties-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .counterparty-card {
+            padding: 1rem;
+        }
+        
+        .modal-content {
+            padding: 1rem;
+            max-height: 90vh;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,1131 @@
+<!-- templates/sewing_tasks.html -->
+{% extends "layout.html" %}
+
+{% block title %}Задачи • Швейка • Eko-Production CRM{% endblock %}
+
+{% block content %}
+<div class="tasks-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-clipboard-list"></i> Задачи швейного производства</h1>
+            <p>Управление всеми задачами швейного цеха</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('create_sewing_task') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Новая задача
+            </a>
+            <a href="{{ url_for('sewing') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Фильтры и поиск -->
+    <div class="filters-card">
+        <div class="filter-header">
+            <h3><i class="fas fa-filter"></i> Фильтры</h3>
+            <button class="filter-toggle" onclick="toggleFilters()">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filter-content" id="filterContent">
+            <form method="GET" class="filter-form">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label class="form-label">Статус</label>
+                        <select class="form-control" name="status" onchange="this.form.submit()">
+                            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Все статусы</option>
+                            <option value="Новая" {% if status_filter == 'Новая' %}selected{% endif %}>Новая</option>
+                            <option value="В работе" {% if status_filter == 'В работе' %}selected{% endif %}>В работе</option>
+                            <option value="Исполнено" {% if status_filter == 'Исполнено' %}selected{% endif %}>Исполнено</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Поиск</label>
+                        <div class="search-box">
+                            <input type="text" class="form-control" name="search" value="{{ search_query }}" 
+                                   placeholder="Поиск по названию или изделию...">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список задач -->
+    <div class="card">
+        <div class="card-body">
+            {% if tasks.items %}
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Задача</th>
+                                <th>КП</th>
+                                <th>Изделие</th>
+                                <th>Кол-во</th>
+                                <th>Статус</th>
+                                <th>Дата создания</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks.items %}
+                            <tr class="task-row" data-task-id="{{ task.id }}" onclick="toggleTaskDetails({{ task.id }})" style="cursor: pointer;">
+                                <td data-label="Задача">
+                                    <strong>
+                                        {{ task.task_name|truncate(40) }}
+                                    </strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {% if task.shipment_date %}
+                                        Отгрузка: {{ task.shipment_date|format_date_short }}
+                                        {% endif %}
+                                    </small>
+                                </td>
+                                <td data-label="КП">
+                                    {% if task.proposal %}
+                                    <a href="{{ url_for('view_proposal', proposal_id=task.proposal.id) }}" class="badge badge-kp" onclick="event.stopPropagation()">
+                                        КП {{ task.proposal.proposal_number|default('') }}
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Изделие">{{ task.product_name|truncate(20) }}</td>
+                                <td data-label="Кол-во">{{ task.quantity }} шт.</td>
+                                <td data-label="Статус" onclick="event.stopPropagation()">
+                                    {% if task.status == 'Новая' %}
+                                    <span class="status-badge status-request clickable-status" 
+                                          data-task-id="{{ task.id }}" 
+                                          data-current-status="Новая"
+                                          onclick="changeTaskStatus(event, {{ task.id }})">
+                                        <span class="status-dot"></span> Новая
+                                    </span>
+                                    {% elif task.status == 'В работе' %}
+                                    <span class="status-badge status-in-progress clickable-status" 
+                                          data-task-id="{{ task.id }}" 
+                                          data-current-status="В работе"
+                                          onclick="changeTaskStatus(event, {{ task.id }})">
+                                        <span class="status-dot"></span> В работе
+                                    </span>
+                                    {% elif task.status == 'Исполнено' %}
+                                    <span class="status-badge status-completed">
+                                        <span class="status-dot"></span> Исполнено
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Дата создания">{{ task.created_at|format_date_short }}</td>
+                                <td data-label="Действия" onclick="event.stopPropagation()">
+                                    <div class="action-buttons">
+                                        <a href="{{ url_for('view_sewing_task', task_id=task.id) }}" class="btn btn-sm btn-secondary" onclick="event.stopPropagation()">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <div class="table-action-dropdown" onclick="event.stopPropagation()">
+                                            <button class="btn btn-sm btn-icon" onclick="toggleDropdown(this)">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="table-action-menu">
+                                                <a href="{{ url_for('create_material_request') }}?task_id={{ task.id }}" class="dropdown-item">
+                                                    <i class="fas fa-box"></i> Запросить материал
+                                                </a>
+                                                {% if task.status != 'Исполнено' %}
+                                                <div class="dropdown-divider"></div>
+                                                <button class="dropdown-item" onclick="quickUpdateStatus({{ task.id }}, 'В работе')">
+                                                    <i class="fas fa-play"></i> В работу
+                                                </button>
+                                                <button class="dropdown-item" onclick="quickUpdateStatus({{ task.id }}, 'Исполнено')">
+                                                    <i class="fas fa-check"></i> Исполнено
+                                                </button>
+                                                {% endif %}
+                                                <div class="dropdown-divider"></div>
+                                                <button class="dropdown-item delete" onclick="deleteTask({{ task.id }})">
+                                                    <i class="fas fa-trash"></i> Удалить задачу
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Детали задачи -->
+                            <tr class="task-details-row" id="task-details-{{ task.id }}" style="display: none;">
+                                <td colspan="7">
+                                    <div class="task-details">
+                                        <div class="task-details-content">
+                                            <h4>Детали задачи</h4>
+                                            <div class="details-grid">
+                                                <div class="detail-item">
+                                                    <strong>Задача:</strong> {{ task.task_name }}
+                                                </div>
+                                                <div class="detail-item">
+                                                    <strong>Изделие:</strong> {{ task.product_name }}
+                                                </div>
+                                                <div class="detail-item">
+                                                    <strong>Количество:</strong> {{ task.quantity }} шт.
+                                                </div>
+                                                <div class="detail-item">
+                                                    <strong>Цвет:</strong> {{ task.color|default('Не указан') }}
+                                                </div>
+                                                {% if task.product_size %}
+                                                <div class="detail-item">
+                                                    <strong>Размеры:</strong> {{ task.product_size }}
+                                                </div>
+                                                {% endif %}
+                                                {% if task.shipment_date %}
+                                                <div class="detail-item">
+                                                    <strong>Дата отгрузки:</strong> {{ task.shipment_date|format_date_short }}
+                                                </div>
+                                                {% endif %}
+                                                {% if task.notes %}
+                                                <div class="detail-item full-width">
+                                                    <strong>Примечания:</strong> {{ task.notes }}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="task-details-actions">
+                                                <a href="{{ url_for('view_sewing_task', task_id=task.id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-external-link-alt"></i> Полная информация
+                                                </a>
+                                                <a href="{{ url_for('create_material_request') }}?task_id={{ task.id }}" class="btn btn-sm btn-secondary">
+                                                    <i class="fas fa-box"></i> Запросить материал
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Пагинация -->
+                {% if tasks.pages > 1 %}
+                <div class="pagination">
+                    {% if tasks.has_prev %}
+                    <a href="{{ url_for('sewing_tasks', page=tasks.prev_num, status=status_filter, search=search_query) }}" 
+                       class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i> Назад
+                    </a>
+                    {% endif %}
+
+                    <span class="pagination-info">
+                        Страница {{ tasks.page }} из {{ tasks.pages }}
+                    </span>
+
+                    {% if tasks.has_next %}
+                    <a href="{{ url_for('sewing_tasks', page=tasks.next_num, status=status_filter, search=search_query) }}" 
+                       class="pagination-btn">
+                        Вперед <i class="fas fa-chevron-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="empty-state-title">Задачи не найдены</h3>
+                    <p class="empty-state-description">
+                        {% if status_filter != 'all' or search_query %}
+                            Попробуйте изменить параметры поиска или создать новую задачу
+                        {% else %}
+                            Создайте первую задачу для швейного производства
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('create_sewing_task') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Создать задачу
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Переключение фильтров
+function toggleFilters() {
+    const filterContent = document.getElementById('filterContent');
+    const toggleIcon = document.querySelector('.filter-toggle i');
+    
+    filterContent.classList.toggle('collapsed');
+    
+    if (filterContent.classList.contains('collapsed')) {
+        toggleIcon.className = 'fas fa-chevron-up';
+    } else {
+        toggleIcon.className = 'fas fa-chevron-down';
+    }
+}
+
+// Переключение выпадающего меню
+function toggleDropdown(button) {
+    event.stopPropagation();
+    const dropdown = button.closest('.table-action-dropdown');
+    const menu = dropdown.querySelector('.table-action-menu');
+    
+    // Закрываем все другие открытые меню
+    document.querySelectorAll('.table-action-menu').forEach(m => {
+        if (m !== menu) {
+            m.style.display = 'none';
+        }
+    });
+    
+    // Переключаем текущее меню
+    if (menu.style.display === 'block') {
+        menu.style.display = 'none';
+    } else {
+        menu.style.display = 'block';
+        
+        // Позиционируем меню
+        const rect = button.getBoundingClientRect();
+        menu.style.position = 'fixed';
+        menu.style.top = (rect.bottom + window.scrollY) + 'px';
+        menu.style.left = (rect.left + window.scrollX) + 'px';
+        menu.style.zIndex = '10005';
+    }
+}
+
+// Закрытие всех выпадающих меню при клике вне их
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.table-action-dropdown')) {
+        document.querySelectorAll('.table-action-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+
+// Быстрое обновление статуса
+async function quickUpdateStatus(taskId, newStatus) {
+    if (!confirm(`Изменить статус задачи на "${newStatus}"?`)) {
+        return;
+    }
+    
+    try {
+        const url = `/sewing/task/${taskId}/update_status`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: newStatus,
+                notes: 'Быстрое изменение статуса'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(`Статус изменен на "${newStatus}"`, 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showNotification('Ошибка при обновлении статуса', 'error');
+        }
+    } catch (error) {
+        showNotification('Ошибка сети', 'error');
+    }
+}
+
+// Изменение статуса при клике на бейдж
+function changeTaskStatus(event, taskId) {
+    event.stopPropagation();
+    
+    const statusBadge = event.target.closest('.clickable-status');
+    const currentStatus = statusBadge.dataset.currentStatus;
+    
+    // Определяем следующий статус
+    let nextStatus;
+    if (currentStatus === 'Новая') {
+        nextStatus = 'В работе';
+    } else if (currentStatus === 'В работе') {
+        nextStatus = 'Исполнено';
+    } else {
+        return;
+    }
+    
+    if (confirm(`Изменить статус задачи на "${nextStatus}"?`)) {
+        quickUpdateStatus(taskId, nextStatus);
+    }
+}
+
+// Переключение деталей задачи
+function toggleTaskDetails(taskId) {
+    const detailsRow = document.getElementById(`task-details-${taskId}`);
+    if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+        // Закрываем все другие открытые детали
+        document.querySelectorAll('.task-details-row').forEach(row => {
+            row.style.display = 'none';
+        });
+        // Открываем выбранные детали
+        detailsRow.style.display = 'table-row';
+    } else {
+        detailsRow.style.display = 'none';
+    }
+}
+
+// Удаление задачи
+async function deleteTask(taskId) {
+    if (!confirm('Вы уверены, что хотите удалить эту задачу? Все связанные запросы материалов также будут удалены.')) {
+        return;
+    }
+    
+    try {
+        const url = `/sewing/task/${taskId}/delete`;
+        const response = await fetch(url, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Задача удалена', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showNotification('Ошибка при удалении: ' + data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Ошибка сети', 'error');
+    }
+}
+
+// Вспомогательная функция для уведомлений
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">${message}</div>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        max-width: 400px;
+        box-shadow: var(--shadow-lg);
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 3000);
+}
+
+// Добавляем стиль для анимации
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+// Управление выпадающими меню в таблице
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdowns = document.querySelectorAll('.table-action-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const toggleBtn = dropdown.querySelector('.btn-icon');
+        const menu = dropdown.querySelector('.table-action-menu');
+        
+        // Показываем меню при клике
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Скрываем все другие открытые меню
+            document.querySelectorAll('.table-action-menu.show').forEach(otherMenu => {
+                if (otherMenu !== menu) {
+                    otherMenu.classList.remove('show');
+                }
+            });
+            
+            // Показываем/скрываем текущее меню
+            menu.classList.toggle('show');
+        });
+        
+        // Скрываем меню при клике вне его
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+        
+        // Предотвращаем закрытие при клике внутри меню
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+});
+
+// Закрытие всех меню при клике на странице
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.table-action-dropdown')) {
+        document.querySelectorAll('.table-action-menu.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
+</script>
+
+<style>
+.tasks-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    animation: fadeIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.header-content h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.header-content p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filters-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.filter-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.filter-toggle {
+    background: none;
+    border: none;
+    color: var(--gray-600);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+}
+
+.filter-toggle:hover {
+    background: var(--gray-100);
+    color: var(--primary);
+}
+
+.filter-content {
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.filter-content.collapsed {
+    max-height: 0;
+}
+
+.filter-form {
+    margin-top: 1rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box .form-control {
+    padding-right: 2.5rem;
+}
+
+.search-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.search-btn:hover {
+    color: var(--primary);
+}
+
+/* Таблицы без скроллбаров */
+.table-wrapper {
+    width: 100%;
+    overflow: visible;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.table-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.table-wrapper {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.table th {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--gray-200);
+    background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+}
+
+.table td {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+/* Левое выравнивание для названий */
+.table td:first-child {
+    text-align: left;
+    min-width: 200px;
+}
+
+.table td:nth-child(2) {
+    text-align: left;
+}
+
+.table tbody tr.task-row {
+    border-bottom: 1px solid var(--gray-100);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.table tbody tr.task-row:hover {
+    background: linear-gradient(90deg, var(--gray-50) 0%, var(--white) 100%);
+}
+
+.table tbody tr.task-details-row {
+    background: var(--gray-50);
+}
+
+.task-details {
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    margin: 0.5rem 0;
+}
+
+.task-details-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-lighter);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    padding: 0.5rem;
+    background: var(--gray-100);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-item strong {
+    color: var(--gray-700);
+    margin-right: 0.5rem;
+}
+
+.task-details-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.badge-kp {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--primary-lighter);
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.badge-kp:hover {
+    background: var(--primary-light);
+}
+
+.text-muted {
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.status-badge.clickable-status {
+    cursor: pointer;
+}
+
+.status-badge.clickable-status:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.status-request {
+    background: var(--status-red-light);
+    color: var(--status-red);
+}
+
+.status-request .status-dot {
+    background: var(--status-red);
+}
+
+.status-in-progress {
+    background: var(--status-yellow-light);
+    color: var(--status-yellow);
+}
+
+.status-in-progress .status-dot {
+    background: var(--status-yellow);
+}
+
+.status-completed {
+    background: var(--status-green-light);
+    color: var(--status-green);
+}
+
+.status-completed .status-dot {
+    background: var(--status-green);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 0.375rem;
+    font-size: 0.75rem;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-200);
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.btn-icon:hover {
+    background: var(--gray-200);
+}
+
+/* Выпадающее меню поверх всего контента */
+.table-action-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.table-action-menu {
+    display: none;
+    position: fixed;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    z-index: 10005;
+    min-width: 200px;
+    padding: 0.5rem 0;
+    margin-top: 0.25rem;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table-action-menu.show {
+    display: block;
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    transition: var(--transition-fast);
+    border-radius: var(--radius-sm);
+}
+
+.dropdown-item:hover {
+    background: var(--gray-50);
+    color: var(--primary);
+}
+
+.dropdown-item.delete:hover {
+    background: var(--status-red-light);
+    color: var(--status-red) !important;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 0.5rem 0;
+}
+
+/* Адаптивность для таблиц */
+@media (max-width: 1024px) {
+    .table-wrapper {
+        border: none;
+        box-shadow: none;
+    }
+    
+    .table {
+        display: block;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tbody {
+        display: block;
+    }
+    
+    .table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        background: var(--white);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .table td {
+        display: block;
+        text-align: left !important;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .table td:last-child {
+        border-bottom: none;
+        padding-top: 1rem;
+    }
+    
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--gray-600);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .action-buttons {
+        justify-content: flex-start;
+        margin-top: 0.5rem;
+    }
+    
+    .table-action-menu {
+        position: absolute;
+        right: 0;
+        left: auto;
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tasks-container {
+        padding: 1rem;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .header-actions {
+        flex-wrap: wrap;
+    }
+    
+    .table th {
+        font-size: 0.55rem;
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    
+    .task-details {
+        padding: 1rem;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 1rem;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+    background: var(--gray-200);
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: var(--gray-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+    font-size: 1.5rem;
+    border: 2px solid var(--gray-200);
+}
+
+.empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+</style>
+{% endblock %}

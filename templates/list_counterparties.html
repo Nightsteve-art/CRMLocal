@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+
+{% block title %}Контрагенты - Eko-production{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+                Контрагенты
+            </h1>
+            <p style="color: var(--text-secondary);">
+                Список всех контрагентов
+            </p>
+        </div>
+        <div>
+            <a href="{{ url_for('create_counterparty') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i>
+                <span>Новый контрагент</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        {% if counterparties %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название компании</th>
+                    <th>Контактное лицо</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                    <th>Количество КП</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cp in counterparties %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 500; color: var(--text-primary);">
+                            {{ cp.name }}
+                        </div>
+                    </td>
+                    <td>{{ cp.contact_person or '-' }}</td>
+                    <td>
+                        {% if cp.email %}
+                        <a href="mailto:{{ cp.email }}" style="color: var(--primary-500);">
+                            {{ cp.email }}
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>{{ cp.phone or '-' }}</td>
+                    <td>
+                        <span class="badge badge-primary">
+                            {{ cp.proposals_count or 0 }}
+                        </span>
+                    </td>
+                    <td>{{ cp.created_at|format_date_short }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('view_counterparty', counterparty_id=cp.id) }}" 
+                               class="btn btn-secondary btn-sm btn-icon" title="Просмотр">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_counterparty', counterparty_id=cp.id) }}" 
+                               class="btn btn-secondary btn-sm btn-icon" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button onclick="deleteCounterparty({{ cp.id }})" 
+                                    class="btn btn-danger btn-sm btn-icon" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Нет контрагентов</h3>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                Добавьте первого контрагента
+            </p>
+            <a href="{{ url_for('create_counterparty') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i>
+                Добавить контрагента
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+async function deleteCounterparty(counterpartyId) {
+    if (!confirm('Вы уверены, что хотите удалить этого контрагента?')) return;
+    
+    try {
+        const response = await fetch(`/counterparty/${counterpartyId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Контрагент успешно удален', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification('Ошибка: ' + result.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Ошибка сети', 'error');
+    }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'error'} fade-in`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '1000';
+    notification.style.maxWidth = '350px';
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    notification.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

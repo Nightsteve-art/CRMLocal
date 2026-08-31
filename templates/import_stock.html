@@ -1,0 +1,357 @@
+{% extends "layout.html" %}
+
+{% block title %}Импорт из Excel • Склад{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header" style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-file-import" style="color: var(--primary);"></i>
+                Импорт товаров из Excel/CSV
+            </h1>
+            <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.5rem;">
+                Загрузите файл с данными товаров для массового добавления или обновления
+            </p>
+        </div>
+        
+        <div class="card-body" style="padding: 1.5rem;">
+            <!-- Upload Form -->
+            <div class="card" style="margin-bottom: 2rem; border: 2px dashed var(--gray-300); background: var(--gray-50);">
+                <div class="card-body" style="padding: 2rem; text-align: center;">
+                    <form method="POST" action="{{ url_for('import_stock') }}" enctype="multipart/form-data" id="importForm">
+                        <div style="margin-bottom: 2rem;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: var(--white); border: 2px solid var(--gray-300); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 2rem;">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">
+                                Перетащите файл сюда
+                            </h3>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                                Поддерживаемые форматы: .xlsx, .xls, .csv
+                            </p>
+                            
+                            <div style="position: relative;">
+                                <input type="file" 
+                                       id="file" 
+                                       name="file" 
+                                       accept=".xlsx,.xls,.csv"
+                                       required
+                                       style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
+                                <div style="padding: 1.5rem; background: var(--white); border: 2px solid var(--gray-300); border-radius: var(--radius-lg); transition: all 0.3s ease;"
+                                     id="dropZone">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
+                                    <div style="font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        Нажмите для выбора файла
+                                    </div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-500);">
+                                        или перетащите файл в эту область
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="fileName" style="margin-top: 1rem; font-size: 0.875rem; color: var(--gray-600); display: none;">
+                                <i class="fas fa-file"></i>
+                                <span id="fileText"></span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: center; gap: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                                <i class="fas fa-upload"></i>
+                                Начать импорт
+                            </button>
+                            <a href="{{ url_for('warehouse') }}" class="btn btn-secondary" style="padding: 0.75rem 2rem;">
+                                <i class="fas fa-times"></i>
+                                Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="card">
+                <div class="card-header" style="padding: 1rem; border-bottom: 1px solid var(--gray-200);">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-info-circle"></i>
+                        Инструкция по импорту
+                    </h3>
+                </div>
+                <div class="card-body" style="padding: 1rem;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-check-circle" style="color: var(--status-green);"></i>
+                            Поддерживаемые форматы
+                        </h4>
+                        <ul style="color: var(--gray-600); font-size: 0.875rem; padding-left: 1.5rem;">
+                            <li><strong>.xlsx</strong> - Excel файл (рекомендуется)</li>
+                            <li><strong>.xls</strong> - Старый формат Excel</li>
+                            <li><strong>.csv</strong> - Текстовый файл с разделителями</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-list-check" style="color: var(--primary);"></i>
+                            Обязательные колонки
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                            Файл должен содержать как минимум эти колонки:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem;">Название колонки</div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace;">sku</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">
+                                    Уникальный артикул товара
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem;">Название колонки</div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace;">name</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">
+                                    Название товара
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem;">Название колонки</div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace;">quantity</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">
+                                    Количество (число)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-list-ul" style="color: var(--primary);"></i>
+                            Дополнительные колонки
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                            Эти колонки будут импортированы если они есть в файле:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 0.75rem;">unit</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Единица измерения</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 0.75rem;">category</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Категория</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 0.75rem;">description</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Описание</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 0.75rem;">min_stock</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Мин. запас</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace; font-size: 0.75rem;">location</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Место хранения</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--status-yellow);"></i>
+                            Важная информация
+                        </h4>
+                        <ul style="color: var(--gray-600); font-size: 0.875rem; padding-left: 1.5rem;">
+                            <li>Файл должен начинаться с заголовков (первая строка - названия колонок)</li>
+                            <li>Если товар с таким SKU уже существует - он будет обновлен</li>
+                            <li>Новые товары будут добавлены</li>
+                            <li>Рекомендуем сделать экспорт текущих данных перед импортом</li>
+                            <li>Максимальный размер файла: 16 МБ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Template Download -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header" style="padding: 1rem; border-bottom: 1px solid var(--gray-200);">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-download"></i>
+                        Шаблон для импорта
+                    </h3>
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Скачайте готовый шаблон Excel с правильной структурой колонок
+                    </p>
+                    <a href="{{ url_for('export_stock') }}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-file-excel"></i>
+                        Скачать шаблон Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('file');
+    const fileName = document.getElementById('fileName');
+    const fileText = document.getElementById('fileText');
+    const form = document.getElementById('importForm');
+    
+    // Drag and drop
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--primary)';
+        dropZone.style.background = 'var(--primary-lighter)';
+    });
+    
+    dropZone.addEventListener('dragleave', function() {
+        dropZone.style.borderColor = 'var(--gray-300)';
+        dropZone.style.background = '';
+    });
+    
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--gray-300)';
+        dropZone.style.background = '';
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileName();
+        }
+    });
+    
+    // File input change
+    fileInput.addEventListener('change', updateFileName);
+    
+    function updateFileName() {
+        if (fileInput.files.length) {
+            const file = fileInput.files[0];
+            fileText.textContent = `${file.name} (${formatBytes(file.size)})`;
+            fileName.style.display = 'flex';
+            
+            // Validate file type
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+                showNotification('Неподдерживаемый формат файла', 'error');
+                fileInput.value = '';
+                fileName.style.display = 'none';
+            }
+        } else {
+            fileName.style.display = 'none';
+        }
+    }
+    
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            showNotification('Выберите файл для импорта', 'error');
+            return;
+        }
+        
+        // Add loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Импорт...';
+        submitBtn.disabled = true;
+        
+        // Reset after 30 seconds if something goes wrong
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 30000);
+    });
+    
+    // Click drop zone to trigger file input
+    dropZone.addEventListener('click', function(e) {
+        if (e.target === dropZone || e.target.parentNode === dropZone) {
+            fileInput.click();
+        }
+    });
+});
+</script>
+
+<style>
+.drop-zone {
+    padding: 2rem;
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    background: var(--gray-50);
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone:hover {
+    border-color: var(--primary);
+    background: var(--primary-lighter);
+}
+
+.drop-zone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-lighter);
+}
+
+.file-info {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.instruction-card {
+    padding: 1rem;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+}
+
+.instruction-title {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.instruction-description {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+@media (max-width: 768px) {
+    .card-header, .card-body {
+        padding: 1rem;
+    }
+    
+    .drop-zone {
+        padding: 1.5rem;
+    }
+    
+    .instructions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,10 @@
+# Включение rewrite engine
+RewriteEngine On
+
+# Если файл или директория существуют, используем их
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Все остальные запросы перенаправляем на Flask
+RewriteRule ^(.*)$ http://127.0.0.1:8000/$1 [P,L]

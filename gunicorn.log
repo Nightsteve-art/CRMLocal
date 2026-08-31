@@ -1,0 +1,1149 @@
+nohup: ignoring input
+[2026-02-03 14:52:45 +0000] [295119] [INFO] Starting gunicorn 25.0.1
+[2026-02-03 14:52:45 +0000] [295119] [INFO] Listening at: http://0.0.0.0:8000 (295119)
+[2026-02-03 14:52:45 +0000] [295119] [INFO] Using worker: sync
+[2026-02-03 14:52:45 +0000] [295120] [INFO] Booting worker with pid: 295120
+[2026-02-03 14:52:45 +0000] [295121] [INFO] Booting worker with pid: 295121
+[2026-02-03 14:52:45 +0000] [295122] [INFO] Booting worker with pid: 295122
+[2026-02-03 14:52:45 +0000] [295123] [INFO] Booting worker with pid: 295123
+[2026-02-03 15:13:29 +0000] [295119] [INFO] Handling signal: hup
+[2026-02-03 15:13:29 +0000] [295119] [INFO] Hang up: Master
+[2026-02-03 15:13:35 +0000] [296075] [INFO] Booting worker with pid: 296075
+[2026-02-03 15:13:35 +0000] [296076] [INFO] Booting worker with pid: 296076
+[2026-02-03 15:13:35 +0000] [296077] [INFO] Booting worker with pid: 296077
+[2026-02-03 15:13:35 +0000] [295119] [WARNING] Worker (pid:295120) was sent SIGHUP!
+[2026-02-03 15:13:35 +0000] [295119] [WARNING] Worker (pid:295121) was sent SIGHUP!
+[2026-02-03 15:13:35 +0000] [295119] [WARNING] Worker (pid:295122) was sent SIGHUP!
+[2026-02-03 15:13:35 +0000] [295119] [WARNING] Worker (pid:295123) was sent SIGHUP!
+[2026-02-03 15:13:35 +0000] [296078] [INFO] Booting worker with pid: 296078
+[2026-02-03 15:18:09 +0000] [295119] [CRITICAL] WORKER TIMEOUT (pid:296077)
+[2026-02-03 15:18:09 +0000] [296077] [ERROR] Error handling request (no URI read)
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 141, in handle
+    req = next(parser)
+          ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/parser.py", line 56, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.source_addr, self.req_count)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 324, in __init__
+    super().__init__(cfg, unreader, peer_addr)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 110, in __init__
+    unused = self.parse(self.unreader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 336, in parse
+    self.read_into(unreader, buf, stop=True)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 375, in read_into
+    data = unreader.read()
+           ^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 36, in read
+    d = self.chunk()
+        ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+    sys.exit(1)
+SystemExit: 1
+[2026-02-03 15:18:09 +0000] [296077] [INFO] Worker exiting (pid: 296077)
+[2026-02-03 15:18:10 +0000] [296237] [INFO] Booting worker with pid: 296237
+[2026-02-03 17:54:41 +0000] [295119] [CRITICAL] WORKER TIMEOUT (pid:296076)
+[2026-02-03 17:54:41 +0000] [296076] [ERROR] Error handling request (no URI read)
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 141, in handle
+    req = next(parser)
+          ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/parser.py", line 56, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.source_addr, self.req_count)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 324, in __init__
+    super().__init__(cfg, unreader, peer_addr)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 110, in __init__
+    unused = self.parse(self.unreader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 344, in parse
+    line, buf = self.read_line(unreader, buf, self.limit_request_line)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 395, in read_line
+    self.read_into(unreader, buf)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 375, in read_into
+    data = unreader.read()
+           ^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 36, in read
+    d = self.chunk()
+        ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+    sys.exit(1)
+SystemExit: 1
+[2026-02-03 17:54:41 +0000] [296076] [INFO] Worker exiting (pid: 296076)
+Telegram уведомление отправлено успешно
+Уведомление отправлено для товара SKU-0001: Товар закончился (остаток 0)
+Telegram уведомление отправлено в чат -5176195113
+Telegram уведомление отправлено в чат -5176195113
+[2026-02-03 17:54:41 +0000] [301712] [INFO] Booting worker with pid: 301712
+[2026-02-03 18:08:33 +0000] [301712] [WARNING] Invalid request from ip=206.168.34.216: Invalid HTTP Version: (2, 0)
+[2026-02-03 20:25:27 +0000] [296078] [WARNING] Invalid request from ip=66.132.153.127: Invalid HTTP Version: (2, 0)
+[2026-02-04 11:33:31 +0000] [295119] [CRITICAL] WORKER TIMEOUT (pid:296075)
+[2026-02-04 11:33:31 +0000] [296075] [ERROR] Error handling request (no URI read)
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 141, in handle
+    req = next(parser)
+          ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/parser.py", line 56, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.source_addr, self.req_count)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 324, in __init__
+    super().__init__(cfg, unreader, peer_addr)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 110, in __init__
+    unused = self.parse(self.unreader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 344, in parse
+    line, buf = self.read_line(unreader, buf, self.limit_request_line)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 395, in read_line
+    self.read_into(unreader, buf)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 375, in read_into
+    data = unreader.read()
+           ^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 36, in read
+    d = self.chunk()
+        ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+    sys.exit(1)
+SystemExit: 1
+[2026-02-04 11:33:31 +0000] [296075] [INFO] Worker exiting (pid: 296075)
+Telegram уведомление отправлено в чат -5176195113
+[2026-02-04 11:33:32 +0000] [295119] [ERROR] Worker (pid:296075) was sent SIGKILL! Perhaps out of memory?
+[2026-02-04 11:33:32 +0000] [357327] [INFO] Booting worker with pid: 357327
+[2026-02-04 11:33:36 +0000] [295119] [CRITICAL] WORKER TIMEOUT (pid:301712)
+[2026-02-04 11:33:36 +0000] [301712] [ERROR] Error handling request (no URI read)
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 141, in handle
+    req = next(parser)
+          ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/parser.py", line 56, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.source_addr, self.req_count)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 324, in __init__
+    super().__init__(cfg, unreader, peer_addr)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 110, in __init__
+    unused = self.parse(self.unreader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 344, in parse
+    line, buf = self.read_line(unreader, buf, self.limit_request_line)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 395, in read_line
+    self.read_into(unreader, buf)
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/message.py", line 375, in read_into
+    data = unreader.read()
+           ^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 36, in read
+    d = self.chunk()
+        ^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/gunicorn/workers/base.py", line 198, in handle_abort
+    sys.exit(1)
+SystemExit: 1
+[2026-02-04 11:33:36 +0000] [301712] [INFO] Worker exiting (pid: 301712)
+[2026-02-04 11:33:37 +0000] [357328] [INFO] Booting worker with pid: 357328
+[2026-02-04 11:33:38,445] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:35:50,623] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:40:08,357] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:45:50,585] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:45:57,615] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:00,565] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:01,217] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:02,553] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:03,897] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:05,399] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:16,543] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:46:19,222] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:47:50,536] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:47:54,409] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:51:49,540] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:51:50,882] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 11:51:54,195] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:18:24,822] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:18:25,405] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:18:34,135] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:22:27,286] ERROR in app: Exception on /sewing [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+  File "/var/www/eko-production/app.py", line 1210, in sewing
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 64, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 98, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: sewing.html
+[2026-02-04 12:23:12,879] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:23:22,766] ERROR in app: Exception on /home [GET]
+Traceback (most recent call last):
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 265, in decorated_function
+    # Функция для отправки уведомлений в Telegram
+             ^^^^^^^^^^
+  File "/var/www/eko-production/app.py", line 286, in home
+    if response.status_code == 200:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 151, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/flask/templating.py", line 132, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/eko-production/templates/index.html", line 1, in top-level template code
+    {% extends "layout.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/layout.html", line 438, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/templates/index.html", line 10, in block 'content'
+    {% if current_user.has_module_access('dashboard') %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/eko-production/venv/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'current_user' is undefined
+[2026-02-04 12:26:11 +0000] [296237] [INFO] Worker exiting (pid: 296237)
+Telegram уведомление отправлено в чат -5176195113
+[2026-02-04 12:26:11 +0000] [296078] [INFO] Worker exiting (pid: 296078)
+[2026-02-04 12:26:11 +0000] [357327] [INFO] Worker exiting (pid: 357327)
+[2026-02-04 12:26:11 +0000] [357328] [INFO] Worker exiting (pid: 357328)
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Handling signal: term
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Worker (pid:296078) was sent SIGTERM!
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Worker (pid:296237) was sent SIGTERM!
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Worker (pid:357327) was sent SIGTERM!
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Worker (pid:357328) was sent SIGTERM!
+[2026-02-04 12:26:11 +0000] [295119] [INFO] Shutting down: Master

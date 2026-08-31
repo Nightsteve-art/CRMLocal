@@ -1,0 +1,240 @@
+<!-- templates/create_sewing_task.html -->
+{% extends "layout.html" %}
+
+{% block title %}Создать задачу • Швейка • Eko-Production CRM{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Создать задачу швейного производства</h2>
+            <p>Создайте новую задачу для швейного цеха</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('create_sewing_task') }}">
+            <div class="form-grid">
+                <!-- Основная информация -->
+                <div class="form-group">
+                    <label class="form-label">Наименование задачи *</label>
+                    <input type="text" class="form-control" name="task_name" required
+                           placeholder="Например: Пошив костюмов для заказа 123">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Связанное КП</label>
+                    <select class="form-control" name="proposal_id">
+                        <option value="none">Не привязано к КП</option>
+                        {% for proposal in active_proposals %}
+                            <option value="{{ proposal.id }}">
+                                КП {{ proposal.proposal_number|default('') }} - {{ proposal.title }}
+                                {% if proposal.deadline %} (до {{ proposal.deadline|format_date_short }}){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-text">Выберите КП со статусом "В работе" для автоматического заполнения данных</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Дата отгрузки</label>
+                    <input type="date" class="form-control" name="shipment_date">
+                </div>
+            </div>
+
+            <!-- Информация об изделии -->
+            <div class="form-section">
+                <h3 class="form-section-title"><i class="fas fa-tshirt"></i> Информация об изделии</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Наименование изделия *</label>
+                        <input type="text" class="form-control" name="product_name" required
+                               placeholder="Например: Костюм рабочий">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Размеры</label>
+                        <input type="text" class="form-control" name="product_size"
+                               placeholder="Например: 48-50, L, 42-44">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Количество *</label>
+                        <input type="number" class="form-control" name="quantity" min="1" step="1" required value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Цвет</label>
+                        <input type="text" class="form-control" name="color"
+                               placeholder="Например: Синий, Красный, Черный">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div class="form-group">
+                <label class="form-label">Примечания</label>
+                <textarea class="form-control" name="notes" rows="3"
+                          placeholder="Дополнительная информация, особые требования, комментарии..."></textarea>
+            </div>
+
+            <!-- Кнопки действия -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Создать задачу
+                </button>
+                <a href="{{ url_for('sewing') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.form-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 2.5rem;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.form-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--gray-400);
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.form-section {
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--gray-200);
+}
+
+.form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-200);
+}
+</style>
+{% endblock %}

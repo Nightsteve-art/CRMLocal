@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Eko-production • CRM{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для header */
+        .main-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 70px !important;
+            background: white !important;
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            z-index: 1000 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        body {
+            padding-top: 70px !important;
+            min-height: 100vh;
+            background: #f8fafc !important;
+        }
+        
+        /* Главный контейнер */
+        .main-content {
+            padding-top: 20px;
+            min-height: calc(100vh - 120px);
+        }
+        
+        /* Навигационное меню */
+        .nav-menu {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            text-decoration: none !important;
+            color: var(--gray-700) !important;
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+        }
+        
+        .nav-link:hover {
+            background: var(--gray-50) !important;
+            color: var(--gray-900) !important;
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%) !important;
+            color: var(--status-blue) !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Dropdown меню */
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            min-width: 200px !important;
+            background: white !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 0 !important;
+            display: none !important;
+            z-index: 1001 !important;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            display: block !important;
+        }
+        
+        .dropdown-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            text-decoration: none !important;
+            color: var(--gray-700) !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--gray-50) !important;
+            color: var(--gray-900) !important;
+        }
+        
+        .dropdown-item.active {
+            background: var(--status-blue-lighter) !important;
+            color: var(--status-blue) !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Логотип */
+        .logo {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+        
+        .logo-icon {
+            width: 36px !important;
+            height: 36px !important;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+        
+        .logo-text {
+            display: flex !important;
+            flex-direction: column !important;
+            line-height: 1.2 !important;
+        }
+        
+        .logo-title {
+            font-weight: 700 !important;
+            color: var(--gray-900) !important;
+            font-size: 1.1rem !important;
+        }
+        
+        .logo-subtitle {
+            font-size: 0.75rem !important;
+            color: var(--gray-500) !important;
+        }
+        
+        /* Контейнер */
+        .container {
+            max-width: 1400px !important;
+            margin: 0 auto !important;
+            padding: 0 20px !important;
+            width: 100% !important;
+        }
+        
+        /* Мобильное меню */
+        .mobile-menu-btn {
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: none !important;
+            border: none !important;
+            color: var(--gray-600) !important;
+            font-size: 1.25rem !important;
+            cursor: pointer !important;
+            margin-left: 1rem !important;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .nav-menu {
+                gap: 0.25rem !important;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+            
+            .nav-menu {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: white !important;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+                flex-direction: column !important;
+                padding: 1rem !important;
+                transform: translateY(-100%) !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                transition: all 0.3s ease !important;
+                z-index: 999 !important;
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+            }
+            
+            .nav-menu.active {
+                transform: translateY(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            .dropdown-menu {
+                position: static !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding-left: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 0 15px !important;
+            }
+        }
+        
+        .nav-menu,
+        .dropdown-menu {
+            list-style: none !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        .nav-menu li,
+        .dropdown-menu li {
+            list-style: none !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        /* Убираем маркеры у вложенных списков */
+        .nav-menu ul,
+        .dropdown-menu ul {
+            list-style: none !important;
+            padding-left: 0 !important;
+        }
+
+        /* Убираем маркеры у всех элементов списка */
+        .nav-menu li::before,
+        .dropdown-menu li::before {
+            display: none !important;
+        }
+
+        /* Добавляем в стили layout.html */
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+            background: var(--gray-50);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-right: 0.5rem;
+        }
+
+        .profile-btn:hover {
+            background: var(--gray-100);
+            color: var(--status-blue);
+            border-color: var(--status-blue-light);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .profile-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (всегда показываем для авторизованных пользователей) -->
+    {% if current_user %}
+    <header class="main-header">
+        <div class="container">
+            <nav style="display: flex; align-items: center; justify-content: space-between; height: 70px;">
+                <!-- Логотип -->
+                <a href="{{ url_for('home') }}" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">Eko-Production</div>
+                        <div class="logo-subtitle">CRM</div>
+                    </div>
+                </a>
+
+                <!-- Кнопка мобильного меню -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Навигационное меню -->
+                <ul class="nav-menu" id="navMenu">
+                    <!-- Главная -->
+                    <li>
+                        <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">
+                            <i class="fas fa-home"></i>
+                            <span>Главная</span>
+                        </a>
+                    </li>
+
+                    <!-- Для закупщика - только заказы -->
+                    {% if current_user.role == 'purchaser' %}
+                        <!-- Все заказы -->
+                        <li>
+                            <a href="{{ url_for('orders') }}" class="nav-link {% if request.endpoint == 'orders' %}active{% endif %}">
+                                <i class="fas fa-list"></i>
+                                <span>Все заказы</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Новый заказ -->
+                        <li>
+                            <a href="{{ url_for('create_order') }}" class="nav-link {% if request.endpoint == 'create_order' %}active{% endif %}">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Новый заказ</span>
+                            </a>
+                        </li>
+                    
+                    <!-- Для других ролей - полная навигация -->
+                    {% else %}
+                    
+                    <!-- Коммерция -->
+                    {% if current_user.has_module_access('dashboard') or current_user.has_module_access('counterparties') %}
+                    <li class="dropdown">
+                        <a href="#" class="nav-link {% if 'dashboard' in request.endpoint or 'counterparties' in request.endpoint %}active{% endif %}">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Коммерция</span>
+                            <i class="dropdown-arrow fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if current_user.has_module_access('dashboard') %}
+                            <li>
+                                <a href="{{ url_for('dashboard') }}" 
+                                   class="dropdown-item {% if 'dashboard' in request.endpoint %}active{% endif %}">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Дашборд</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if current_user.has_module_access('counterparties') %}
+                            <li>
+                                <a href="{{ url_for('counterparties') }}" 
+           class="dropdown-item {% if 'counterparties' in request.endpoint %}active{% endif %}">
+            <i class="fas fa-building"></i>
+            <span>Контрагенты</span>
+        </a>
+                            </li>
+                            {% endif %}
+							
+        <!-- НОВЫЙ ПУНКТ -->
+        <li>
+            <a href="{{ url_for('calculator') }}" 
+               class="dropdown-item {% if 'calculator' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-calculator"></i>
+                <span>Калькулятор</span>
+            </a>
+        </li>
+    </ul>
+</li>
+{% endif %}
+
+                    
+                    <!-- Производство -->
+                    {% if current_user.has_module_access('production') or current_user.has_module_access('sewing') %}
+                    <li class="dropdown">
+                        <a href="#" class="nav-link {% if 'production' in request.endpoint or 'sewing' in request.endpoint %}active{% endif %}">
+                            <i class="fas fa-industry"></i>
+                            <span>Производство</span>
+                            <i class="dropdown-arrow fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if current_user.has_module_access('production') %}
+                            <li>
+                               <a href="{{ url_for('production_kanban') }}" class="dropdown-item">
+							   <i class="fas fa-chalkboard-user"></i>
+                                    <span>Производство</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if current_user.has_module_access('sewing') %}
+                            <li>
+                                <a href="{{ url_for('sewing') }}" 
+                                   class="dropdown-item {% if 'sewing' in request.endpoint %}active{% endif %}">
+                                    <i class="fas fa-tshirt"></i>
+                                    <span>Швейка</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Склад -->
+                    {% if current_user.has_module_access('warehouse') or current_user.has_module_access('orders') or current_user.has_module_access('shipping') %}
+                    <li class="dropdown">
+                        <a href="#" class="nav-link {% if 'warehouse' in request.endpoint or 'orders' in request.endpoint or 'shipping' in request.endpoint %}active{% endif %}">
+                            <i class="fas fa-warehouse"></i>
+                            <span>Склад</span>
+                            <i class="dropdown-arrow fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if current_user.has_module_access('warehouse') %}
+                            <li>
+                                <a href="{{ url_for('warehouse') }}" 
+                                   class="dropdown-item {% if 'warehouse' in request.endpoint %}active{% endif %}">
+                                    <i class="fas fa-boxes"></i>
+                                    <span>Склад</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                              {% if current_user.has_module_access('orders') %}
+        <li>
+            <a href="{{ url_for('orders') }}" 
+               class="dropdown-item {% if request.endpoint in ['orders', 'create_order', 'view_order'] %}active{% endif %}">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Заказы</span>
+            </a>
+        </li>
+        {% endif %}
+                            {% if current_user.has_module_access('shipping') %}
+                            <li>
+                                <a href="#" class="dropdown-item large-tile-disabled">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    <span>Отгрузки</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Пользователи -->
+                    {% if current_user.has_permission('users:read') %}
+                    <li>
+                        <a href="{{ url_for('user_management') }}" 
+                           class="nav-link {% if request.endpoint and 'user' in request.endpoint %}active{% endif %}">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Пользователи</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% endif %} <!-- Конец проверки роли purchaser -->
+                </ul>
+
+                <!-- User menu -->
+                <div class="user-menu" style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="user-avatar" style="width: 34px; height: 34px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; color: var(--gray-600);">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-info" style="display: flex; flex-direction: column;">
+                        <div class="user-name" style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">
+                            {{ current_user.full_name or current_user.username }}
+                        </div>
+                        <div class="user-role" style="font-size: 0.75rem; color: var(--gray-500);">
+                            {{ current_user.get_role_name() }}
+                        </div>
+                    </div>
+                    {% if current_user.role != 'admin' %}
+                    <a href="{{ url_for('edit_user', user_id=current_user.id) }}" 
+                       class="profile-btn" 
+                       title="Редактировать профиль"
+                       style="width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); border: 1px solid var(--gray-300); background: var(--gray-50); text-decoration: none; transition: all 0.2s ease; margin-right: 0.5rem;">
+                        <i class="fas fa-user-edit"></i>
+                    </a>
+                    {% endif %}
+                   
+                    <a href="{{ url_for('logout') }}" class="logout-btn" style="width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); border: 1px solid var(--gray-300); background: var(--gray-50); text-decoration: none; transition: all 0.2s ease;" title="Выход">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    {% endif %}
+
+    <!-- Main content -->
+    <main class="container main-content">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages-container" style="margin-bottom: 1.5rem;">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" style="padding: 1rem 1.25rem; border-radius: 8px; background: var(--status-green-lighter); border-left: 4px solid var(--status-green); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <i class="fas 
+                                {% if category == 'success' %}fa-check-circle
+                                {% elif category == 'error' %}fa-exclamation-circle
+                                {% elif category == 'warning' %}fa-exclamation-triangle
+                                {% else %}fa-info-circle{% endif %}">
+                            </i>
+                            <span style="flex: 1;">{{ message }}</span>
+                            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: var(--gray-500); cursor: pointer; padding: 0;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% if current_user %}
+    <footer style="padding: 1.5rem 0; margin-top: 3rem; border-top: 1px solid var(--gray-200); background: white;">
+        <div class="container">
+            <div style="text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+                © 2024 Eko-Production CRM • Версия 2.0
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+
+    <script>
+        // Мобильное меню
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuBtn && navMenu) {
+                // Показать/скрыть меню на мобильных
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navMenu.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-bars');
+                        icon.classList.toggle('fa-times');
+                    }
+                });
+                
+                // Закрыть меню при клике вне его
+                document.addEventListener('click', function(e) {
+                    if (!mobileMenuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+                        navMenu.classList.remove('active');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+                
+                // Закрыть меню при изменении размера окна
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        navMenu.classList.remove('active');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+            }
+            
+            // Dropdown меню
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                const link = dropdown.querySelector('.nav-link');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                
+                if (link && menu) {
+                    // Desktop hover
+                    dropdown.addEventListener('mouseenter', function() {
+                        if (window.innerWidth > 768) {
+                            menu.style.display = 'block';
+                        }
+                    });
+                    
+                    dropdown.addEventListener('mouseleave', function() {
+                        if (window.innerWidth > 768) {
+                            menu.style.display = 'none';
+                        }
+                    });
+                    
+                    // Mobile tap
+                    if (window.innerWidth <= 768) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Close other dropdowns
+                            document.querySelectorAll('.dropdown-menu').forEach(otherMenu => {
+                                if (otherMenu !== menu) {
+                                    otherMenu.style.display = 'none';
+                                }
+                            });
+                            
+                            // Toggle current dropdown
+                            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                        });
+                    }
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!dropdown.contains(e.target) && window.innerWidth > 768) {
+                            menu.style.display = 'none';
+                        }
+                    });
+                }
+            });
+            
+            // Close dropdowns when pressing escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        menu.style.display = 'none';
+                    });
+                }
+            });
+        });
+        
+        // Уведомления
+        window.showNotification = function(message, type = 'success', duration = 3000) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 85px;
+                right: 20px;
+                z-index: 10000;
+                max-width: 350px;
+                padding: 1rem 1.25rem;
+                border-radius: 8px;
+                background: ${type === 'success' ? 'var(--status-green-lighter)' : 
+                             type === 'error' ? 'var(--status-red-lighter)' : 
+                             type === 'warning' ? 'var(--status-orange-lighter)' : 'var(--status-blue-lighter)'};
+                border-left: 4px solid ${type === 'success' ? 'var(--status-green)' : 
+                                      type === 'error' ? 'var(--status-red)' : 
+                                      type === 'warning' ? 'var(--status-orange)' : 'var(--status-blue)'};
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            notification.innerHTML = `
+                <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+                <span style="flex: 1;">${message}</span>
+                <button onclick="this.parentElement.remove()" 
+                        style="background: none; border: none; color: var(--gray-500); cursor: pointer; padding: 0;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, duration);
+            
+            // Add animations if not exist
+            if (!document.querySelector('#notification-animations')) {
+                const style = document.createElement('style');
+                style.id = 'notification-animations';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                    @keyframes slideOut {
+                        from {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                        to {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        };
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

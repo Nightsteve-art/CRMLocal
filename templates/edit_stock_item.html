@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% block title %}Редактирование • {{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header" style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-edit" style="color: var(--primary);"></i>
+                Редактирование позиции
+            </h1>
+            <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 0.5rem;">
+                {{ item.sku }} • {{ item.quantity }} {{ item.unit }}
+            </p>
+        </div>
+        
+        <div class="card-body" style="padding: 1.5rem;">
+            <form method="POST" action="{{ url_for('edit_stock_item', item_id=item.id) }}" id="editForm">
+                <div class="form-grid">
+                    <!-- Основная информация -->
+                    <div class="form-section" style="grid-column: 1 / -1;">
+                        <div class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Основная информация
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="sku" class="form-label">
+                                    Артикул (SKU) *
+                                    <span class="form-hint">Уникальный код товара</span>
+                                </label>
+                                <input type="text" 
+                                       id="sku" 
+                                       name="sku" 
+                                       class="form-control" 
+                                       value="{{ item.sku }}"
+                                       required
+                                       pattern="[A-Za-z0-9-_]+"
+                                       title="Только буквы, цифры, дефисы и подчеркивания">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">
+                                    Название *
+                                    <span class="form-hint">Полное название товара</span>
+                                </label>
+                                <input type="text" 
+                                       id="name" 
+                                       name="name" 
+                                       class="form-control" 
+                                       value="{{ item.name }}"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                Описание
+                                <span class="form-hint">Дополнительная информация о товаре</span>
+                            </label>
+                            <textarea id="description" 
+                                      name="description" 
+                                      class="form-control" 
+                                      rows="3">{{ item.description or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Параметры -->
+                    <div class="form-section" style="grid-column: 1 / -1;">
+                        <div class="form-section-title">
+                            <i class="fas fa-cog"></i>
+                            Параметры
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="unit" class="form-label">
+                                    Единица измерения *
+                                    <span class="form-hint">Шт, кг, м, литр и т.д.</span>
+                                </label>
+                                <select id="unit" name="unit" class="form-control" required>
+                                    <option value="шт" {% if item.unit == 'шт' %}selected{% endif %}>Штуки (шт)</option>
+                                    <option value="кг" {% if item.unit == 'кг' %}selected{% endif %}>Килограммы (кг)</option>
+                                    <option value="г" {% if item.unit == 'г' %}selected{% endif %}>Граммы (г)</option>
+                                    <option value="м" {% if item.unit == 'м' %}selected{% endif %}>Метры (м)</option>
+                                    <option value="см" {% if item.unit == 'см' %}selected{% endif %}>Сантиметры (см)</option>
+                                    <option value="л" {% if item.unit == 'л' %}selected{% endif %}>Литр (л)</option>
+                                    <option value="мл" {% if item.unit == 'мл' %}selected{% endif %}>Миллилитр (мл)</option>
+                                    <option value="уп" {% if item.unit == 'уп' %}selected{% endif %}>Упаковка (уп)</option>
+                                    <option value="рул" {% if item.unit == 'рул' %}selected{% endif %}>Рулон (рул)</option>
+                                    <option value="компл" {% if item.unit == 'компл' %}selected{% endif %}>Комплект (компл)</option>
+                                    <option value="пар" {% if item.unit == 'пар' %}selected{% endif %}>Пара (пар)</option>
+                                    <option value="набор" {% if item.unit == 'набор' %}selected{% endif %}>Набор (набор)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="min_stock" class="form-label">
+                                    Минимальный запас
+                                    <span class="form-hint">При достижении этого уровня будет предупреждение</span>
+                                </label>
+                                <input type="number" 
+                                       id="min_stock" 
+                                       name="min_stock" 
+                                       class="form-control" 
+                                       value="{{ item.min_stock }}"
+                                       step="0.001"
+                                       min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Классификация -->
+                    <div class="form-section" style="grid-column: 1 / -1;">
+                        <div class="form-section-title">
+                            <i class="fas fa-tags"></i>
+                            Классификация
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="category" class="form-label">
+                                    Категория
+                                    <span class="form-hint">Группа товаров (метизы, электроника и т.д.)</span>
+                                </label>
+                                <input type="text" 
+                                       id="category" 
+                                       name="category" 
+                                       class="form-control" 
+                                       value="{{ item.category or '' }}"
+                                       list="categories"
+                                       placeholder="Введите или выберите категорию">
+                                <datalist id="categories">
+                                    <option value="Метизы">
+                                    <option value="Крепеж">
+                                    <option value="Электроника">
+                                    <option value="Инструменты">
+                                    <option value="Расходные материалы">
+                                    <option value="Сырье">
+                                    <option value="Готовая продукция">
+                                    <option value="Упаковка">
+                                    <option value="Химия">
+                                    <option value="Оборудование">
+                                </datalist>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location" class="form-label">
+                                    Место хранения
+                                    <span class="form-hint">Стеллаж, ячейка, складской номер</span>
+                                </label>
+                                <input type="text" 
+                                       id="location" 
+                                       name="location" 
+                                       class="form-control" 
+                                       value="{{ item.location or '' }}"
+                                       placeholder="Например: Стеллаж А-12">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form actions -->
+                <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+                    <a href="{{ url_for('view_stock_item', item_id=item.id) }}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-times"></i>
+                        Отмена
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-save"></i>
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editForm');
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Check required fields
+        const required = ['sku', 'name'];
+        required.forEach(field => {
+            const input = document.getElementById(field);
+            if (!input.value.trim()) {
+                markInvalid(input, 'Это поле обязательно');
+                isValid = false;
+            } else {
+                markValid(input);
+            }
+        });
+        
+        // Check SKU format
+        const sku = document.getElementById('sku').value.trim();
+        if (sku && !/^[A-Za-z0-9-_]+$/.test(sku)) {
+            markInvalid(document.getElementById('sku'), 'Только буквы, цифры, дефисы и подчеркивания');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            showNotification('Пожалуйста, исправьте ошибки в форме', 'error');
+        } else {
+            // Add loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+            submitBtn.disabled = true;
+        }
+    });
+    
+    function markInvalid(element, message) {
+        element.classList.add('invalid');
+        element.style.borderColor = 'var(--status-red)';
+        
+        let error = element.parentNode.querySelector('.error-message');
+        if (!error) {
+            error = document.createElement('div');
+            error.className = 'error-message';
+            error.style.color = 'var(--status-red)';
+            error.style.fontSize = '0.75rem';
+            error.style.marginTop = '0.25rem';
+            element.parentNode.appendChild(error);
+        }
+        error.textContent = message;
+    }
+    
+    function markValid(element) {
+        element.classList.remove('invalid');
+        element.style.borderColor = '';
+        
+        const error = element.parentNode.querySelector('.error-message');
+        if (error) error.remove();
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            form.dispatchEvent(new Event('submit'));
+        }
+        
+        if (e.key === 'Escape') {
+            window.location.href = "{{ url_for('view_stock_item', item_id=item.id) }}";
+        }
+    });
+});
+</script>
+
+<style>
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-section {
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--gray-200);
+}
+
+.form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+.form-hint {
+    font-weight: normal;
+    color: var(--gray-500);
+    font-size: 0.75rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .card-header, .card-body {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

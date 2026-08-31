@@ -1,0 +1,864 @@
+{% extends "layout.html" %}
+
+{% block title %}Заказ {{ order.order_number }} • Eko-Production CRM{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Шапка заказа -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header" style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-shopping-cart" style="color: var(--primary);"></i>
+                        Заказ № {{ order.order_number }}
+                    </h1>
+                    
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap;">
+                        <!-- Статус -->
+                        <div>
+                            {% if order.status == 'размещен' %}
+                            <span class="status-badge status-request" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                <span class="status-dot"></span>
+                                Размещен
+                            </span>
+                            {% elif order.status == 'в работе' %}
+                            <span class="status-badge status-in-progress" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                <span class="status-dot"></span>
+                                В работе
+                            </span>
+                            {% elif order.status == 'исполнено' %}
+                            <span class="status-badge status-completed" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                <span class="status-dot"></span>
+                                Исполнено
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Дата создания -->
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600); font-size: 0.875rem;">
+                            <i class="fas fa-calendar"></i>
+                            {{ order.created_at|format_date }}
+                        </div>
+                        
+                        <!-- Количество позиций -->
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600); font-size: 0.875rem;">
+                            <i class="fas fa-boxes"></i>
+                            {{ order.total_items }} позиций
+                        </div>
+                        
+                        <!-- Создатель -->
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600); font-size: 0.875rem;">
+                            <i class="fas fa-user"></i>
+                            {{ order.created_by_user.full_name or order.created_by_user.username }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{{ url_for('orders') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Назад
+                    </a>
+                    
+                    <div class="action-dropdown">
+                        <button class="btn btn-primary dropdown-toggle"
+                                onclick="toggleDropdown(this)">
+                            <i class="fas fa-cog"></i>
+                            Действия
+                        </button>
+                        <div class="action-dropdown-menu">
+                            <button class="dropdown-item" onclick="copyOrder({{ order.id }})">
+                                <i class="fas fa-copy"></i>
+                                Копировать заказ
+                            </button>
+                            
+                            <button class="dropdown-item" onclick="showAddItemModal()">
+                                <i class="fas fa-plus"></i>
+                                Добавить позицию
+                            </button>
+                            
+                            <div class="dropdown-divider"></div>
+                            
+                            {% if can_delete() and has_permission('orders:delete') %}
+                            <button class="dropdown-item delete" onclick="deleteOrder({{ order.id }})">
+                                <i class="fas fa-trash"></i>
+                                Удалить заказ
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Информация о заказе -->
+        <div class="card-body" style="padding: 1.5rem;">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <!-- Менеджер -->
+                <div>
+                    <div class="form-label">Менеджер заказа</div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-lighter); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-900);">
+                                {% if order.manager_name %}
+                                    {{ order.manager_name }}
+                                {% else %}
+                                    <span style="color: var(--gray-400);">Не назначен</span>
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">
+                                {% if order.status == 'в работе' and order.request_invoice %}
+                                <span style="color: var(--status-red); font-weight: 600;">
+                                    <i class="fas fa-exclamation-triangle"></i> Требуется счет!
+                                </span>
+                                {% elif order.invoice_path %}
+                                <span style="color: var(--status-green);">
+                                    <i class="fas fa-check-circle"></i> Счет прикреплен
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статус управления -->
+                <div>
+                    <div class="form-label">Управление статусом</div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <select id="statusSelect" class="form-control" style="flex: 1; min-width: 150px;"
+                                onchange="updateOrderStatus()">
+                            <option value="размещен" {% if order.status == 'размещен' %}selected{% endif %}>Размещен</option>
+                            <option value="в работе" {% if order.status == 'в работе' %}selected{% endif %}>В работе</option>
+                            <option value="исполнено" {% if order.status == 'исполнено' %}selected{% endif %}>Исполнено</option>
+                        </select>
+                        
+                        <select id="managerSelect" class="form-control" style="flex: 1; min-width: 150px;">
+                            <option value="">Выберите менеджера</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}" {% if order.manager_id == user.id %}selected{% endif %}>
+                                {{ user.full_name or user.username }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Чекбокс запроса счета -->
+                    {% if order.status != 'исполнено' %}
+                    <div style="margin-top: 0.75rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="requestInvoice" {% if order.request_invoice %}checked{% endif %}>
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">
+                                Запросить счет при смене статуса на "В работе"
+                            </span>
+                        </label>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Примечания -->
+            {% if order.notes %}
+            <div style="margin-top: 1.5rem;">
+                <div class="form-label">Примечания</div>
+                <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 1rem; white-space: pre-line;">
+                    {{ order.notes }}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Загрузка счета -->
+            {% if order.status == 'в работе' and (order.request_invoice or not order.invoice_path) %}
+            <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--status-yellow-light); border: 2px dashed var(--status-yellow); border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem; color: var(--status-yellow);"></i>
+                        <div>
+                            <div style="font-weight: 700; color: var(--status-yellow); margin-bottom: 0.25rem;">
+                                Требуется прикрепить счет
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">
+                                Загрузите счет для этого заказа
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button type="button" class="btn btn-primary" onclick="showInvoiceModal()">
+                            <i class="fas fa-upload"></i>
+                            Загрузить счет
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Счет -->
+            {% if order.invoice_path %}
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--status-green-light); border: 1px solid var(--status-green); border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-file-invoice" style="font-size: 1.5rem; color: var(--status-green);"></i>
+                        <div>
+                            <div style="font-weight: 700; color: var(--status-green); margin-bottom: 0.25rem;">
+                                Счет прикреплен
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">
+                                {{ order.invoice_file_name }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ url_for('download_order_invoice', order_id=order.id) }}" 
+                           class="btn btn-secondary" 
+                           target="_blank">
+                            <i class="fas fa-download"></i>
+                            Скачать
+                        </a>
+                        <button type="button" class="btn btn-secondary" onclick="showInvoiceModal()">
+                            <i class="fas fa-sync-alt"></i>
+                            Заменить
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Позиции заказа -->
+    <div class="card">
+        <div class="card-header" style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200);">
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-list-ul"></i>
+                Позиции заказа
+                <span style="margin-left: auto; font-size: 0.875rem; color: var(--gray-500); font-weight: normal;">
+                    {{ order.items|length }} позиций
+                </span>
+            </h2>
+        </div>
+        
+        <div class="card-body" style="padding: 0;">
+            {% if order.items %}
+            <div class="table-wrapper">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Наименование</th>
+                                <th>Количество</th>
+                                <th>Категория</th>
+                                <th>Цех</th>
+                                <th>Ссылка</th>
+                                <th>Фото</th>
+                                <th style="text-align: center;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                            <tr>
+                                <td style="font-weight: 600; color: var(--gray-700);">{{ loop.index }}</td>
+                                <td style="font-weight: 600; color: var(--gray-900);">{{ item.name }}</td>
+                                <td>
+                                    <span class="badge" style="background: var(--primary-lighter); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-weight: 600;">
+                                        {{ item.quantity }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if item.category == 'на склад' %}
+                                    <span class="status-badge status-completed" style="font-size: 0.75rem;">
+                                        На склад
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge" style="background: var(--gray-100); color: var(--gray-600); font-size: 0.75rem;">
+                                        {{ item.category }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.workshop %}
+                                    <span style="color: var(--gray-700);">{{ item.workshop }}</span>
+                                    {% else %}
+                                    <span style="color: var(--gray-400);">Не указан</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.link %}
+                                    <a href="{{ item.link }}" target="_blank" style="color: var(--primary); font-size: 0.875rem;">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Ссылка
+                                    </a>
+                                    {% else %}
+                                    <span style="color: var(--gray-400);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.photo %}
+                                    <a href="{{ url_for('get_order_item_photo', filename=item.photo) }}" 
+                                       target="_blank"
+                                       style="color: var(--primary); font-size: 0.875rem;">
+                                        <i class="fas fa-image"></i>
+                                        Просмотр
+                                    </a>
+                                    {% else %}
+                                    <span style="color: var(--gray-400);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteOrderItem({{ item.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3 class="empty-state-title">Нет позиций</h3>
+                    <p class="empty-state-description">
+                        В этом заказе пока нет позиций
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="showAddItemModal()">
+                        <i class="fas fa-plus"></i>
+                        Добавить позицию
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для добавления позиции -->
+<div id="addItemModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-plus"></i>
+                Добавить позицию
+            </h2>
+            <button class="modal-close" onclick="hideAddItemModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <form id="addItemForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="newItemName" class="form-label">Наименование *</label>
+                        <input type="text" id="newItemName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newItemQuantity" class="form-label">Количество *</label>
+                        <input type="number" id="newItemQuantity" class="form-control" step="0.001" min="0.001" value="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newItemCategory" class="form-label">Категория *</label>
+                        <select id="newItemCategory" class="form-control" required>
+                            <option value="расходники" selected>Расходники</option>
+                            <option value="на склад">На склад</option>
+                            <option value="метизы">Метизы</option>
+                            <option value="электроника">Электроника</option>
+                            <option value="инструменты">Инструменты</option>
+                            <option value="прочее">Прочее</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newItemWorkshop" class="form-label">Цех/Отдел</label>
+                        <input type="text" id="newItemWorkshop" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newItemLink" class="form-label">Ссылка</label>
+                        <input type="url" id="newItemLink" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newItemPhoto" class="form-label">Фото (опционально)</label>
+                        <input type="file" id="newItemPhoto" class="form-control" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="newItemNotes" class="form-label">Примечания</label>
+                        <textarea id="newItemNotes" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button type="button" class="btn btn-secondary" onclick="hideAddItemModal()">
+                Отмена
+            </button>
+            <button type="button" class="btn btn-primary" onclick="submitAddItem()">
+                Добавить
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для загрузки счета -->
+<div id="invoiceModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-file-invoice-dollar"></i>
+                {% if order.invoice_path %}Заменить счет{% else %}Загрузить счет{% endif %}
+            </h2>
+            <button class="modal-close" onclick="hideInvoiceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <form id="invoiceForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="invoiceFile" class="form-label">Файл счета *</label>
+                    <input type="file" id="invoiceFile" name="invoice_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                    <div class="form-text" style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                        Поддерживаемые форматы: PDF, JPG, PNG, DOC, DOCX (до 10MB)
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: var(--gray-50); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <i class="fas fa-info-circle" style="color: var(--primary); margin-top: 0.125rem;"></i>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">
+                            После загрузки счета уведомление будет отправлено в Telegram
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button type="button" class="btn btn-secondary" onclick="hideInvoiceModal()">
+                Отмена
+            </button>
+            <button type="button" class="btn btn-primary" onclick="submitInvoice()">
+                Загрузить
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Функции для работы с заказом
+function toggleDropdown(button) {
+    const dropdown = button.closest('.action-dropdown');
+    const menu = dropdown.querySelector('.action-dropdown-menu');
+    menu.classList.toggle('show');
+}
+
+// Закрытие выпадающих меню при клике вне их
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.action-dropdown')) {
+        document.querySelectorAll('.action-dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// Обновление статуса заказа
+function updateOrderStatus() {
+    const statusSelect = document.getElementById('statusSelect');
+    const managerSelect = document.getElementById('managerSelect');
+    const requestInvoice = document.getElementById('requestInvoice');
+    const notes = prompt('Добавьте примечание к изменению статуса (опционально):', '');
+    
+    const data = {
+        status: statusSelect.value,
+        manager_id: managerSelect.value || null,
+        request_invoice: requestInvoice ? requestInvoice.checked : false,
+        notes: notes || ''
+    };
+    
+    fetch(`/orders/{{ order.id }}/update_status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Статус заказа обновлен!', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showNotification(data.error || 'Ошибка обновления', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Ошибка сети', 'error');
+    });
+}
+
+// Копирование заказа
+function copyOrder(orderId) {
+    if (confirm('Создать копию этого заказа?')) {
+        fetch(`/orders/${orderId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Заказ успешно скопирован!', 'success');
+                setTimeout(() => {
+                    window.location.href = `/orders/${data.new_order_id}`;
+                }, 1000);
+            } else {
+                showNotification(data.error || 'Ошибка копирования', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('Ошибка сети', 'error');
+        });
+    }
+}
+
+// Удаление заказа
+function deleteOrder(orderId) {
+    if (confirm('Вы уверены, что хотите удалить этот заказ?')) {
+        fetch(`/orders/${orderId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Заказ успешно удален!', 'success');
+            setTimeout(() => {
+                window.location.href = '/orders';
+            }, 1000);
+        } else {
+            showNotification(data.error || 'Ошибка удаления', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Ошибка сети', 'error');
+    });
+    }
+}
+
+// Удаление позиции заказа
+function deleteOrderItem(itemId) {
+    if (confirm('Удалить эту позицию из заказа?')) {
+        fetch(`/orders/item/${itemId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Позиция удалена!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showNotification('Ошибка удаления', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('Ошибка сети', 'error');
+        });
+    }
+}
+
+// Модальное окно добавления позиции
+function showAddItemModal() {
+    document.getElementById('addItemModal').style.display = 'flex';
+}
+
+function hideAddItemModal() {
+    document.getElementById('addItemModal').style.display = 'none';
+    document.getElementById('addItemForm').reset();
+}
+
+function submitAddItem() {
+    const form = document.getElementById('addItemForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('name', document.getElementById('newItemName').value);
+    formData.append('quantity', document.getElementById('newItemQuantity').value);
+    formData.append('category', document.getElementById('newItemCategory').value);
+    formData.append('workshop', document.getElementById('newItemWorkshop').value);
+    formData.append('link', document.getElementById('newItemLink').value);
+    formData.append('notes', document.getElementById('newItemNotes').value);
+    
+    const photoInput = document.getElementById('newItemPhoto');
+    if (photoInput.files[0]) {
+        formData.append('photo', photoInput.files[0]);
+    }
+    
+    fetch(`/orders/{{ order.id }}/add_item`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Позиция добавлена!', 'success');
+            hideAddItemModal();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showNotification(data.error || 'Ошибка добавления', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Ошибка сети', 'error');
+    });
+}
+
+// Модальное окно загрузки счета
+function showInvoiceModal() {
+    document.getElementById('invoiceModal').style.display = 'flex';
+}
+
+function hideInvoiceModal() {
+    document.getElementById('invoiceModal').style.display = 'none';
+    document.getElementById('invoiceForm').reset();
+}
+
+function submitInvoice() {
+    const form = document.getElementById('invoiceForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const formData = new FormData();
+    const fileInput = document.getElementById('invoiceFile');
+    formData.append('invoice_file', fileInput.files[0]);
+    
+    fetch(`/orders/{{ order.id }}/upload_invoice`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Счет успешно загружен!', 'success');
+            hideInvoiceModal();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showNotification(data.error || 'Ошибка загрузки', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Ошибка сети', 'error');
+    });
+}
+
+// Функция для показа уведомлений
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-lg);
+        background: ${type === 'success' ? 'var(--status-green-light)' : 
+                      type === 'error' ? 'var(--status-red-light)' : 'var(--gray-100)'};
+        color: ${type === 'success' ? 'var(--status-green)' : 
+                 type === 'error' ? 'var(--status-red)' : 'var(--gray-700)'};
+        border: 2px solid ${type === 'success' ? 'var(--status-green)' : 
+                           type === 'error' ? 'var(--status-red)' : 'var(--gray-300)'};
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        max-width: 400px;
+        box-shadow: var(--shadow-xl);
+        font-weight: 600;
+    `;
+    
+    const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+    notification.innerHTML = `
+        <i class="fas fa-${icon}" style="font-size: 1.25rem;"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Добавляем стиль анимации
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 1rem;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .modal-content {
+        background: var(--white);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<style>
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow: visible;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--gray-200);
+    background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: linear-gradient(90deg, var(--gray-50) 0%, var(--white) 100%);
+}
+
+@media (max-width: 768px) {
+    .table-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
