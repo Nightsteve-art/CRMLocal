@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Modern UI preview — Eko-Production CRM{% endblock %}
+{% block title %}Главная — Eko-Production CRM{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-preview.css') }}">
@@ -14,8 +14,8 @@
   </header>
   <main class="crm-main" id="overview">
     <section class="page-heading">
-      <div><h1>Современный dashboard</h1><p>Безопасный предварительный просмотр нового интерфейса. Рабочие маршруты CRM не изменены.</p></div>
-      <button class="btn btn-primary">+ Новый заказ</button>
+      <div><h1>Рабочая панель</h1><p>Актуальные показатели производства, заказов и склада.</p></div>
+      <a class="btn btn-primary" href="{{ url_for('create_order') }}">+ Новый заказ</a>
     </section>
     <section class="grid">
       <article class="card"><div class="metric-label">Активные заказы</div><div class="metric-value">{{ stats.orders }}</div><div class="metric-note">● В работе</div></article>

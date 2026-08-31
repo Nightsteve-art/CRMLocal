@@ -13,18 +13,18 @@ from functools import wraps
 from sqlalchemy.orm import Session  # Добавить в импорты
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'eko-production-secret-key-2024'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///eko_production.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-me-before-production')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///eko_production.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 16MB max file size
-app.config['ITEMS_PER_PAGE'] = 10  # Пагинация: 10 элементов на странице
+app.config['ITEMS_PER_PAGE'] = int(os.environ.get('ITEMS_PER_PAGE', '10'))
 
 # Настройки Telegram
-app.config['TELEGRAM_BOT_TOKEN'] = '8442743583:AAECJ_HJblsLy_unMY6KknN5tWstNueuZZo'
-app.config['TELEGRAM_CHAT_ID'] = '-5236774313'      # Склад
-app.config['TELEGRAM_SEWING_CHAT_ID'] = '-5176195113' # Чат Швейки
-app.config['TELEGRAM_ZAKAZ_CHAT_ID'] = '-1003770806206'   # Чат заказов
+app.config['TELEGRAM_BOT_TOKEN'] = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+app.config['TELEGRAM_CHAT_ID'] = os.environ.get('TELEGRAM_CHAT_ID', '')
+app.config['TELEGRAM_SEWING_CHAT_ID'] = os.environ.get('TELEGRAM_SEWING_CHAT_ID', '')
+app.config['TELEGRAM_ZAKAZ_CHAT_ID'] = os.environ.get('TELEGRAM_ZAKAZ_CHAT_ID', '')
 
 # Создаем папку для загрузок если нет
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -520,31 +520,30 @@ def index():
         return redirect(url_for('home'))
     return redirect(url_for('login'))
 
-# Главная страница с плитками
-@app.route('/home')
-@login_required
-def home():
-    # Статистика для отображения на главной (только нужные данные)
-    stats = {
+# Updated dashboard. Existing operational modules retain their established routes.
+def build_home_stats():
+    return {
         'total': Proposal.query.count(),
-        'stock_items': StockItem.query.count(),
-        'sewing_tasks': SewingTask.query.count(),
-        'orders': Order.query.count(),
-    }
-    
-    return render_template('index.html', stats=stats)
-
-# Isolated preview for the redesigned interface. Existing CRM routes remain unchanged.
-@app.route('/ui-preview')
-@login_required
-def ui_preview():
-    stats = {
         'proposals': Proposal.query.count(),
         'stock_items': StockItem.query.count(),
         'sewing_tasks': SewingTask.query.count(),
         'orders': Order.query.count(),
     }
-    return render_template('modern_preview.html', stats=stats)
+
+@app.route('/home')
+@login_required
+def home():
+    return render_template('modern_preview.html', stats=build_home_stats())
+
+@app.route('/home/legacy')
+@login_required
+def legacy_home():
+    return render_template('index.html', stats=build_home_stats())
+
+@app.route('/ui-preview')
+@login_required
+def ui_preview():
+    return redirect(url_for('home'))
 
 # Обновить функцию login
 @app.route('/login', methods=['GET', 'POST'])
